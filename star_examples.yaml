@@ -1,0 +1,143 @@
+metadata:
+  created: '2026-03-08'
+  description: STAR Interview Prep — manage your Situation, Task, Action, Result examples
+competency_taxonomy:
+- name: Strategic Analysis & Insight
+  description: Applying frameworks, synthesising data, and generating actionable insights to inform strategic direction
+- name: Stakeholder Influence
+  description: Building alignment across senior leadership, managing competing agendas, and driving buy-in for strategic initiatives
+    without a clear mandate
+- name: Business Case Development
+  description: Structuring compelling investment cases, quantifying value, and supporting executive decision-making
+- name: Market Intelligence
+  description: Monitoring industry trends, assessing competitive dynamics, and translating external signals into strategic
+    implications
+- name: Cross-functional Alignment
+  description: Connecting strategy to execution by aligning cross-functional teams around shared priorities
+- name: Communication & Storytelling
+  description: Distilling complex analysis into clear narratives for board, C-suite, and investor audiences
+- name: Portfolio & Resource Prioritisation
+  description: Evaluating strategic options, managing trade-offs, and allocating resources to highest-value opportunities
+- name: Commercial Acumen & Value Creation
+  description: Understanding P&L drivers, pricing strategy, partnership economics, and paths to sustainable growth
+- name: Change Management & Transformation
+  description: Leading strategic change programs, managing resistance, and embedding new ways of working
+- name: Problem Solving Under Ambiguity
+  description: Structuring ill-defined problems, making decisions with incomplete data, and iterating toward clarity
+- name: Teamwork & Collaboration
+  description: Genuine genorisity with colleagues, can give and receive feedback
+- name: Initiative & Ownership
+  description: Proactively identify issues and drive solutions without waiting to be told
+examples:
+- id: star_001
+  title: SAMPLE — Developing a Market Entry Strategy for a New Geography
+  primary_competency: Strategic Analysis & Insight
+  secondary_competencies:
+  - Business Case Development
+  - Communication & Storytelling
+  company: Acme Corp
+  role: Strategy Manager
+  period: 2024-2026
+  tags:
+  - market-entry
+  - strategy
+  - business-case
+  - board-level
+  - growth
+  completeness: complete
+  recency: recent
+  situation: "SAMPLE:\n- Acme Corp's core domestic market was maturing, with revenue growth slowing to 2% year-on-year. \n\
+    - The CEO tasked the strategy team with identifying the next growth engine. Three options were on the table\n  1. geographic\
+    \ expansion into Southeast Asia,\n  2. adjacency moves into a new product vertical, and\n  3. an acquisition-led approach\n\
+    - but there was no structured analysis to support a decision, and the leadership team held strongly divergent views."
+  task: 'SAMPLE:  As Strategy Manager, I was responsible for leading the evaluation of all three growth options, developing
+    a recommendation supported by a robust business case, and presenting it to the Executive Committee and Board for approval
+    within a 10-week window.
+
+    '
+  action: "SAMPLE: \n1. Designed a structured evaluation framework scoring each option across market attractiveness, right\
+    \ to win, investment required, time to value, and strategic risk. \n2. Conducted rapid market sizing for three Southeast\
+    \ Asian markets using public data, analyst reports, and interviews with local distributors and industry contacts. \n3.\
+    \ Built a financial model for the recommended market (Indonesia) with three scenarios — conservative, base, and upside\
+    \ — including a 5-year P&L, required investment, and payback period. \n4. Stress-tested assumptions with the CFO and regional\
+    \ GMs to build credibility and pre-align key stakeholders before the formal board presentation. \n5. Crafted a 15-page\
+    \ board paper and a supporting executive summary that framed the recommendation within the company's long-term strategic\
+    \ ambition.\n"
+  result: 'SAMPLE: The Board approved the Indonesia market entry with an initial investment of $4M. The structured evaluation
+    framework was adopted as the standard approach for future strategic decisions. Within 12 months of entry, the Indonesia
+    operation reached break-even 6 months ahead of the base-case projection.
+
+    '
+  key_metrics:
+  - SAMPLE — Board approval secured for $4M investment
+  - SAMPLE — Evaluation framework adopted as company standard
+  - SAMPLE — Indonesia operation reached break-even 6 months ahead of plan
+  review_notes: '**Overall** Strong — The example provides clear context, distinct personal responsibility, concrete first-person
+    actions, quantified results, and persuasively demonstrates Strategic Analysis & Insight within a concise, interview-ready
+    format.
+
+
+    **Top 3 improvement opportunities**
+
+    1. Make actions more explicitly first-person (e.g., “I personally conducted XYZ interviews” or “I led workshops with…”
+    instead of “Conducted rapid market sizing…”), to reinforce personal ownership.
+
+    2. Briefly clarify the initial challenge of divergent leadership views and how your analysis resolved these (e.g., “I
+    facilitated consensus by…”), to strengthen the story''s insight and influence elements.
+
+    3. Add a sentence on how you addressed risk or uncertainty in your recommendation (e.g., “I identified key risks and proposed
+    mitigation strategies…”), to deepen evidence of strategic foresight.'
+  source: manual entry
+- id: star_002
+  title: SAMPLE — Leading a Portfolio Prioritisation Under Budget Constraints
+  primary_competency: Portfolio & Resource Prioritisation
+  secondary_competencies:
+  - Stakeholder Influence
+  company: Globex Industries
+  role: Senior Strategy Analyst
+  period: '2023'
+  tags:
+  - portfolio-strategy
+  - prioritisation
+  - cost-optimisation
+  - stakeholder-management
+  - exec-level
+  completeness: in_progress
+  recency: recent
+  situation: "SAMPLE\n- Globex Industries faced a 20% reduction in its discretionary investment budget following a difficult\
+    \ Q2. The company had 14 active strategic initiatives (across digital transformation, geographic expansion, and operational\
+    \ efficiency) but could now only fund approximately 8. \n- Each initiative had an executive sponsor who considered their\
+    \ project essential, creating significant political tension and no clear basis for comparison."
+  task: 'SAMPLE
+
+    - I was asked to design and facilitate a portfolio prioritisation process that would produce a defensible, data-driven
+    ranking of all 14 initiatives and a recommended funding plan for the Executive Committee to approve within 4 weeks.
+
+    '
+  action: "SAMPLE\n1. Developed a weighted scoring model with criteria agreed by the CFO and COO: strategic alignment, revenue\
+    \ impact (NPV over 3 years), feasibility and execution risk, and dependency on other initiatives. \n2. Ran structured\
+    \ intake sessions with each initiative owner to collect consistent data using a standardised template. \n3. Facilitated\
+    \ a calibration workshop with the senior leadership team where initiatives were plotted on an impact vs. feasibility matrix,\
+    \ making trade-offs visible and transparent. \n4. Proposed three portfolio scenarios (aggressive, balanced, conservative)\
+    \ with clear trade-offs articulated for each."
+  result: "SAMPLE\n- The Executive Committee adopted the balanced scenario, funding 9 of 14 initiatives and deferring 5 with\
+    \ clear re-entry criteria. \n- The process reduced cross-functional tension by giving every sponsor a fair hearing and\
+    \ a transparent rationale for decisions.\n"
+  key_metrics:
+  - SAMPLE — 9 of 14 initiatives funded through structured prioritisation
+  - SAMPLE — Process completed within the 4-week deadline
+  review_notes: '**Overall** Strong — Clear context, distinct personal ownership, concrete actions, and quantified results;
+    demonstrates robust portfolio/resource prioritisation.
+
+
+    **Top 3 improvement opportunities**
+
+    1. Make your ownership explicit in actions (e.g., "I designed the scoring model and personally facilitated the calibration
+    workshop" instead of passive language).
+
+    2. Quantify the impact on business outcomes, not just process (e.g., "The funded initiatives delivered $X incremental
+    revenue or Y% cost savings over 12 months").
+
+    3. Highlight a specific stakeholder management challenge and your approach (e.g., "I persuaded two executive sponsors
+    to align behind the agreed criteria after initial resistance by...").'
+  source: manual entry

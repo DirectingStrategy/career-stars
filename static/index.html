@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STAR Interview Prep</title>
+<style>
+  :root {
+    --dark: #232d4c; --grey: #7F8691; --pink-light: #FFE3E1; --pink-strong: #FE5F55;
+    --bg: #f5f5f7; --card: #fff; --border: #e0e0e4; --text: #232d4c;
+    --green: #198754; --amber: #fd7e14; --red: #dc3545;
+    --green-bg: #d1e7dd; --amber-bg: #fff3cd; --red-bg: #f8d7da;
+    --sidebar-w: 280px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
+
+  /* ── Sidebar ─────────────────────────────────────── */
+  .sidebar {
+    width: var(--sidebar-w); background: var(--dark); border-right: 1px solid var(--border);
+    padding: 20px; position: fixed; top: 0; left: 0; bottom: 0; overflow-y: auto; z-index: 10;
+  }
+  .sidebar h1 { font-size: 18px; margin-bottom: 4px; color: #fff; }
+  .sidebar .subtitle { font-size: 12px; color: var(--grey); margin-bottom: 20px; }
+  .filter-group { margin-bottom: 16px; }
+  .filter-group label { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--grey); margin-bottom: 4px; }
+  .filter-group select, .filter-group input {
+    width: 100%; padding: 7px 10px; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px;
+    font-size: 13px; background: rgba(255,255,255,0.08); color: #fff;
+  }
+  .filter-group select option { background: var(--dark); color: #fff; }
+  .filter-group select:focus, .filter-group input:focus { outline: none; border-color: var(--pink-strong); }
+  .filter-group input::placeholder { color: var(--grey); }
+  .completeness-toggles { display: flex; gap: 6px; flex-wrap: wrap; }
+  .completeness-toggles button {
+    padding: 4px 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2);
+    font-size: 11px; font-weight: 600; cursor: pointer; background: rgba(255,255,255,0.05);
+    color: var(--grey); transition: all 0.15s;
+  }
+  .completeness-toggles button.active-complete { background: var(--green-bg); border-color: var(--green); color: var(--green); }
+  .completeness-toggles button.active-in_progress { background: var(--amber-bg); border-color: var(--amber); color: var(--amber); }
+  .btn-clear {
+    display: none; margin-top: 6px; margin-bottom: 4px; padding: 0; border: none; background: none;
+    color: var(--pink-strong); font-size: 11px; cursor: pointer; text-decoration: underline;
+  }
+  .btn-clear.visible { display: inline-block; }
+  .btn-clear:hover { color: #fff; }
+  .btn-add {
+    display: block; width: 100%; margin-top: 10px; padding: 10px;
+    border: none; border-radius: 8px; background: var(--pink-strong); color: #fff;
+    font-size: 13px; font-weight: 600; cursor: pointer; text-align: center;
+    transition: background 0.15s;
+  }
+  .btn-add:hover { background: #e5453d; }
+  .manage-link {
+    display: block; text-align: right; margin-top: 4px;
+    color: var(--grey); font-size: 11px; text-decoration: underline;
+    cursor: pointer;
+  }
+  .manage-link:hover { color: #fff; }
+
+  /* ── Stats bar ───────────────────────────────────── */
+  .stats {
+    display: flex; gap: 16px; align-items: center; padding: 12px 0; font-size: 13px; color: var(--grey);
+    border-bottom: 1px solid var(--border); margin-bottom: 16px;
+  }
+  .stats .count { font-weight: 700; color: var(--text); }
+  .stat-badge { padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+  .stat-complete { background: var(--green-bg); color: var(--green); }
+  .stat-in_progress { background: var(--amber-bg); color: var(--amber); }
+
+  /* ── Main content ────────────────────────────────── */
+  .main { margin-left: var(--sidebar-w); flex: 1; padding: 24px 32px; }
+
+  /* ── Card grid ───────────────────────────────────── */
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 14px; }
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px; cursor: pointer; transition: box-shadow 0.15s, border-color 0.15s;
+  }
+  .card:hover { box-shadow: 0 2px 12px rgba(35,45,76,0.1); border-color: var(--pink-strong); }
+  .card-title { font-size: 14px; font-weight: 600; margin-bottom: 6px; line-height: 1.3; color: var(--dark); }
+  .card-meta { font-size: 12px; color: var(--grey); margin-bottom: 8px; }
+  .card-meta span { margin-right: 10px; }
+  .card-snippet {
+    font-size: 12px; color: var(--grey); line-height: 1.4; margin-bottom: 8px;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+
+  /* ── Sort toolbar ────────────────────────────────── */
+  .toolbar {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
+  }
+  .toolbar .sort-group { display: flex; align-items: center; gap: 8px; }
+  .toolbar .sort-group label { font-size: 12px; color: var(--grey); font-weight: 500; }
+  .toolbar .sort-group select {
+    padding: 5px 10px; border: 1px solid var(--border); border-radius: 6px;
+    font-size: 13px; background: var(--card); color: var(--text); cursor: pointer;
+  }
+  .toolbar .sort-group select:focus { outline: none; border-color: var(--pink-strong); }
+
+  /* ── Form tag picker ─────────────────────────────── */
+  .checkbox-list {
+    max-height: 150px; overflow-y: auto; border: 1px solid var(--border); border-radius: 6px;
+    padding: 6px 8px; background: #fff; font-size: 13px;
+  }
+  .cb-item { display: block; padding: 3px 0; cursor: pointer; color: var(--text); }
+  .cb-item input { margin-right: 6px; }
+  .form-tag-picker { position: relative; }
+  .form-tag-box {
+    min-height: 38px; border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px;
+    display: flex; flex-wrap: wrap; gap: 4px; align-items: center; cursor: text; background: #fff;
+  }
+  .form-tag-box:focus-within { border-color: var(--pink-strong); }
+  .ftp-pill {
+    display: inline-flex; align-items: center; gap: 3px; background: var(--pink-light);
+    color: var(--dark); font-size: 12px; padding: 2px 8px; border-radius: 12px;
+  }
+  .ftp-pill .ftp-x { cursor: pointer; font-weight: 600; color: var(--pink-strong); margin-left: 2px; }
+  .ftp-input {
+    border: none; outline: none; font-size: 13px; flex: 1; min-width: 80px; padding: 4px 0;
+    background: transparent;
+  }
+  .ftp-dropdown {
+    display: none; position: absolute; left: 0; right: 0; top: 100%; margin-top: 2px;
+    background: #fff; border: 1px solid var(--border); border-radius: 6px; max-height: 160px;
+    overflow-y: auto; z-index: 100; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  .ftp-dropdown.open { display: block; }
+  .ftp-option {
+    padding: 6px 10px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px;
+  }
+  .ftp-option:hover { background: var(--pink-light); }
+  .ftp-option.selected { background: #f0f0f4; }
+  .ftp-option .ftp-check { width: 14px; text-align: center; color: var(--pink-strong); font-weight: 700; }
+  .card-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+  .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 10px;
+    font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px;
+  }
+  .badge-complete { background: var(--green-bg); color: var(--green); }
+  .badge-in_progress { background: var(--amber-bg); color: var(--amber); }
+  .badge-competency { background: var(--pink-light); color: var(--pink-strong); }
+
+  /* ── Detail modal ────────────────────────────────── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(35,45,76,0.5);
+    z-index: 100; justify-content: center; align-items: flex-start; padding: 40px 20px;
+    overflow-y: auto;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--card); border-radius: 14px; width: 100%; max-width: 800px;
+    box-shadow: 0 8px 40px rgba(35,45,76,0.2); padding: 28px 32px; position: relative;
+  }
+  .modal-close {
+    position: absolute; top: 16px; right: 20px; background: none; border: none;
+    font-size: 24px; cursor: pointer; color: var(--grey); line-height: 1;
+  }
+  .modal-close:hover { color: var(--dark); }
+  .modal-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 20px; }
+  .modal-title { font-size: 20px; font-weight: 700; flex: 1; color: var(--dark); }
+  .modal-header-meta { font-size: 13px; color: var(--grey); margin-top: 4px; }
+
+  .review-notes {
+    background: var(--red-bg); border: 1px solid var(--red); border-radius: 8px;
+    padding: 12px 16px; margin-bottom: 20px; font-size: 13px; line-height: 1.5;
+  }
+  .review-notes strong { display: block; margin-bottom: 4px; color: var(--red); font-size: 11px; text-transform: uppercase; }
+
+  .star-section { margin-bottom: 16px; }
+  .star-section-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+    color: var(--pink-strong); margin-bottom: 4px; display: flex; align-items: center; gap: 6px;
+  }
+  .star-section-label .letter {
+    display: inline-flex; width: 22px; height: 22px; border-radius: 50%;
+    background: var(--dark); color: #fff; font-size: 12px; font-weight: 700;
+    align-items: center; justify-content: center;
+  }
+  .star-text { font-size: 14px; line-height: 1.6; color: var(--text); }
+  .star-textarea {
+    width: 100%; min-height: 100px; padding: 10px; border: 1px solid var(--pink-strong);
+    border-radius: 6px; font-size: 14px; line-height: 1.6; font-family: inherit;
+    resize: vertical; background: var(--pink-light);
+  }
+
+  .metrics-list { list-style: none; padding: 0; }
+  .metrics-list li { font-size: 13px; padding: 3px 0; color: var(--text); }
+  .metrics-list li::before { content: "\25CF  "; color: var(--pink-strong); }
+
+  .tags-display { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+  .tag-pill {
+    padding: 2px 8px; border-radius: 10px; font-size: 11px;
+    background: var(--bg); border: 1px solid var(--border); color: var(--grey);
+  }
+
+  .modal-actions {
+    display: flex; gap: 10px; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border);
+  }
+  .modal-actions .spacer { flex: 1; }
+  .btn {
+    padding: 8px 20px; border-radius: 8px; font-size: 13px; font-weight: 600;
+    cursor: pointer; border: none; transition: all 0.15s;
+  }
+  .btn-primary { background: var(--pink-strong); color: #fff; }
+  .btn-primary:hover { background: #e5453d; }
+  .btn-secondary { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { background: var(--border); }
+  .btn-save { background: var(--green); color: #fff; }
+  .btn-save:hover { background: #157347; }
+  .btn-danger { background: transparent; color: var(--red); border: 1px solid var(--red); }
+  .btn-danger:hover { background: var(--red-bg); }
+
+  .edit-row { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
+  .edit-row label { font-size: 12px; font-weight: 600; color: var(--grey); min-width: 100px; }
+  .edit-row select, .edit-row input {
+    flex: 1; padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px;
+  }
+  .toast {
+    position: fixed; bottom: 24px; right: 24px; padding: 12px 24px;
+    background: var(--dark); color: #fff; border-radius: 8px; font-size: 14px;
+    font-weight: 600; z-index: 200; opacity: 0; transition: opacity 0.3s;
+    box-shadow: 0 4px 16px rgba(35,45,76,0.2);
+  }
+  .toast.show { opacity: 1; }
+
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--grey); }
+  .empty-state h3 { font-size: 18px; margin-bottom: 8px; color: var(--dark); }
+
+  /* ── Multi-select tag picker ────────────────────── */
+  .tag-picker { position: relative; }
+  .tag-picker-selected {
+    display: flex; flex-wrap: wrap; gap: 4px; padding: 5px 8px;
+    border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; background: rgba(255,255,255,0.08);
+    min-height: 32px; cursor: pointer; font-size: 12px; align-items: center;
+  }
+  .tag-picker-selected:focus-within { border-color: var(--pink-strong); }
+  .tag-picker-selected .tp-pill {
+    display: inline-flex; align-items: center; gap: 3px; padding: 1px 6px;
+    background: var(--pink-light); color: var(--pink-strong); border-radius: 8px; font-size: 11px; font-weight: 600;
+  }
+  .tag-picker-selected .tp-pill .tp-x {
+    cursor: pointer; font-size: 13px; line-height: 1; opacity: 0.6;
+  }
+  .tag-picker-selected .tp-pill .tp-x:hover { opacity: 1; }
+  .tag-picker-placeholder { color: var(--grey); font-size: 12px; }
+  .tag-picker-dropdown {
+    display: none; position: absolute; top: 100%; left: 0; right: 0;
+    background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+    max-height: 200px; overflow-y: auto; z-index: 20; box-shadow: 0 4px 12px rgba(35,45,76,0.15);
+    margin-top: 2px;
+  }
+  .tag-picker-dropdown.open { display: block; }
+  .tag-picker-dropdown input {
+    width: 100%; padding: 6px 10px; border: none; border-bottom: 1px solid var(--border);
+    font-size: 12px; outline: none; color: var(--text);
+  }
+  .tag-picker-dropdown .tp-option {
+    padding: 5px 10px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px;
+    color: var(--text);
+  }
+  .tag-picker-dropdown .tp-option:hover { background: var(--pink-light); }
+  .tag-picker-dropdown .tp-option.selected { background: var(--pink-light); }
+  .tag-picker-dropdown .tp-option .tp-check { width: 14px; text-align: center; font-size: 11px; color: var(--pink-strong); }
+
+  /* ── Recency badge ─────────────────────────────── */
+  .badge-recent { background: #d0f0fd; color: #0369a1; }
+  .badge-old { background: #f1f1f1; color: #888; }
+
+  /* ── Competency manager ────────────────────────── */
+  .comp-list { list-style: none; padding: 0; }
+  .comp-item {
+    display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+    border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; background: var(--bg);
+  }
+  .comp-item-info { flex: 1; }
+  .comp-item-name { font-weight: 600; font-size: 14px; color: var(--dark); }
+  .comp-item-desc { font-size: 12px; color: var(--grey); margin-top: 2px; }
+  .comp-item-actions { display: flex; gap: 6px; }
+  .comp-item-actions button {
+    padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border);
+    font-size: 11px; cursor: pointer; background: var(--card);
+  }
+  .comp-item-actions .btn-edit-comp { color: var(--dark); }
+  .comp-item-actions .btn-edit-comp:hover { background: var(--pink-light); }
+  .comp-item-actions .btn-del-comp { color: var(--red); border-color: var(--red); }
+  .comp-item-actions .btn-del-comp:hover { background: var(--red-bg); }
+  .comp-add-form { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .comp-add-form input {
+    flex: 1; min-width: 150px; padding: 8px 10px; border: 1px solid var(--border);
+    border-radius: 6px; font-size: 13px;
+  }
+
+  /* ── Confirm dialog ────────────────────────────── */
+  .confirm-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(35,45,76,0.5);
+    z-index: 300; justify-content: center; align-items: center;
+  }
+  .confirm-overlay.open { display: flex; }
+  .confirm-box {
+    background: var(--card); border-radius: 12px; padding: 24px 28px; max-width: 400px;
+    box-shadow: 0 8px 40px rgba(35,45,76,0.25); text-align: center;
+  }
+  .confirm-box h3 { font-size: 16px; margin-bottom: 8px; color: var(--dark); }
+  .confirm-box p { font-size: 13px; color: var(--grey); margin-bottom: 20px; }
+  .confirm-box .confirm-actions { display: flex; gap: 10px; justify-content: center; }
+
+  /* ── Settings modal ─────────────────────────────── */
+  .settings-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(35,45,76,0.5);
+    z-index: 250; justify-content: center; align-items: center;
+  }
+  .settings-overlay.open { display: flex; }
+  .settings-box {
+    background: var(--card); border-radius: 12px; padding: 24px 28px; max-width: 480px; width: 90%;
+    box-shadow: 0 8px 40px rgba(35,45,76,0.25);
+  }
+  .settings-box h3 { font-size: 16px; margin-bottom: 16px; color: var(--dark); }
+  .settings-row { margin-bottom: 14px; }
+  .settings-row label { display: block; font-size: 12px; font-weight: 600; color: var(--grey); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.3px; }
+  .settings-row select, .settings-row input {
+    width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px;
+    font-size: 13px; background: var(--card); color: var(--text);
+  }
+  .settings-row input[type="password"] { font-family: monospace; letter-spacing: 1px; }
+  .settings-row small { display: block; margin-top: 3px; font-size: 11px; color: var(--grey); }
+  .settings-actions { display: flex; gap: 10px; margin-top: 20px; }
+
+  .sidebar-header { display: flex; justify-content: space-between; align-items: center; }
+  .btn-gear { background: none; border: none; color: var(--grey); font-size: 18px; cursor: pointer; padding: 4px; line-height: 1; }
+  .btn-gear:hover { color: #fff; }
+
+  .btn-ai { background: #6366f1; color: #fff; }
+  .btn-ai:hover { background: #4f46e5; }
+  .btn-ai:disabled { opacity: 0.6; cursor: not-allowed; }
+  .ai-loading { display: inline-block; width: 14px; height: 14px; border: 2px solid #fff; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 6px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Markdown in star-text & review-notes ────────── */
+  .star-text p { margin: 0 0 8px; }
+  .star-text p:last-child { margin-bottom: 0; }
+  .star-text ul, .star-text ol { padding-left: 20px; margin: 4px 0 8px; }
+  .star-text li { margin-bottom: 2px; }
+  .review-notes p { margin: 0 0 6px; }
+  .review-notes p:last-child { margin-bottom: 0; }
+  .review-notes ul, .review-notes ol { padding-left: 20px; margin: 4px 0 6px; }
+  .review-notes li { margin-bottom: 2px; }
+</style>
+</head>
+<body>
+
+<!-- ── Sidebar ─────────────────────────────────────── -->
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <h1>STAR Interview Prep</h1>
+    <button class="btn-gear" onclick="openSettings()" title="AI Settings">&#9881;</button>
+  </div>
+  <div class="subtitle">Create and edit your examples</div>
+
+  <div class="filter-group">
+    <label>Search</label>
+    <input type="text" id="searchInput" placeholder="Search all fields...">
+  </div>
+
+  <span class="btn-clear" id="btnClear" onclick="clearFilters()">Clear filters</span>
+
+  <div class="filter-group">
+    <label>Competency</label>
+    <select id="filterCompetency"><option value="">All competencies</option></select>
+    <span class="manage-link" onclick="openCompetencyManager()">Manage</span>
+  </div>
+
+  <div class="filter-group">
+    <label>Company</label>
+    <select id="filterCompany"><option value="">All companies</option></select>
+  </div>
+
+  <div class="filter-group">
+    <label>STAR Completeness</label>
+    <div class="completeness-toggles" id="completenessToggles">
+      <button data-value="complete" class="active-complete">Complete</button>
+      <button data-value="in_progress" class="active-in_progress">In Progress</button>
+    </div>
+  </div>
+
+  <div class="filter-group">
+    <label>Recency</label>
+    <select id="filterRecency">
+      <option value="">All</option>
+      <option value="recent">Recent</option>
+      <option value="old">Not Recent</option>
+    </select>
+  </div>
+
+  <div class="filter-group">
+    <label>Tags</label>
+    <div class="tag-picker" id="tagPicker">
+      <div class="tag-picker-selected" id="tagPickerSelected">
+        <span class="tag-picker-placeholder" id="tagPlaceholder">Select tags...</span>
+      </div>
+      <div class="tag-picker-dropdown" id="tagPickerDropdown">
+        <input type="text" id="tagSearchInput" placeholder="Search tags...">
+        <div id="tagOptionsList"></div>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn-add" onclick="openNew()">+ Add New STAR</button>
+</aside>
+
+<!-- ── Main content ────────────────────────────────── -->
+<main class="main">
+  <div class="stats" id="stats"></div>
+  <div class="toolbar">
+    <div></div>
+    <div class="sort-group">
+      <label>Sort by</label>
+      <select id="sortSelect">
+        <option value="title-asc">Title A–Z</option>
+        <option value="title-desc">Title Z–A</option>
+        <option value="company-asc">Company A–Z</option>
+        <option value="competency-asc">Competency A–Z</option>
+        <option value="completeness-asc">Completeness</option>
+        <option value="recency-desc">Recent first</option>
+      </select>
+    </div>
+  </div>
+  <div class="card-grid" id="cardGrid"></div>
+</main>
+
+<!-- ── Detail modal ────────────────────────────────── -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modal"></div>
+</div>
+
+<!-- ── Confirm dialog ──────────────────────────────── -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box" id="confirmBox"></div>
+</div>
+
+<!-- ── Toast ────────────────────────────────────────── -->
+<div class="toast" id="toast">Saved!</div>
+
+<!-- ── Settings overlay ──────────────────────────── -->
+<div class="settings-overlay" id="settingsOverlay">
+  <div class="settings-box">
+    <h3>AI Review Settings</h3>
+    <div class="settings-row">
+      <label>Provider</label>
+      <select id="settingsProvider" onchange="onProviderChange()">
+        <option value="openai">OpenAI</option>
+        <option value="anthropic">Anthropic</option>
+      </select>
+    </div>
+    <div class="settings-row">
+      <label>Model</label>
+      <select id="settingsModel"></select>
+    </div>
+    <div class="settings-row">
+      <label>API Key</label>
+      <input type="password" id="settingsApiKey" placeholder="sk-... or sk-ant-...">
+      <small>Stored in your browser only. Sent only to the AI provider.</small>
+    </div>
+    <div class="settings-actions">
+      <button class="btn btn-save" onclick="saveSettings()">Save</button>
+      <button class="btn btn-secondary" onclick="closeSettings()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+// ── State ───────────────────────────────────────────
+let allExamples = [];
+let meta = {};
+let activeCompletenessFilters = new Set(["complete", "in_progress"]);
+let selectedTags = new Set();
+let editMode = false;
+let currentStar = null;
+
+function completenessLabel(v) { return v === 'complete' ? 'Complete' : v === 'in_progress' ? 'In Progress' : v; }
+function recencyLabel(v) { return v === 'recent' ? 'Recent' : v === 'old' ? 'Not Recent' : v; }
+
+// ── Init ────────────────────────────────────────────
+async function init() {
+  meta = await (await fetch("/api/meta")).json();
+  populateDropdowns();
+  await loadStars();
+  setupListeners();
+}
+
+function populateDropdowns() {
+  const comp = document.getElementById("filterCompetency");
+  meta.competencies.forEach(c => {
+    const o = document.createElement("option"); o.value = c; o.textContent = c; comp.appendChild(o);
+  });
+  const co = document.getElementById("filterCompany");
+  meta.companies.forEach(c => {
+    const o = document.createElement("option"); o.value = c; o.textContent = c; co.appendChild(o);
+  });
+  renderTagOptions();
+}
+
+function setupListeners() {
+  document.getElementById("searchInput").addEventListener("input", debounce(loadStars, 250));
+  document.getElementById("filterCompetency").addEventListener("change", loadStars);
+  document.getElementById("filterCompany").addEventListener("change", loadStars);
+  document.getElementById("filterRecency").addEventListener("change", loadStars);
+  document.querySelectorAll("#completenessToggles button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const v = btn.dataset.value;
+      if (activeCompletenessFilters.has(v)) {
+        activeCompletenessFilters.delete(v);
+        btn.classList.remove("active-" + v);
+      } else {
+        activeCompletenessFilters.add(v);
+        btn.classList.add("active-" + v);
+      }
+      loadStars();
+    });
+  });
+  document.getElementById("sortSelect").addEventListener("change", loadStars);
+  document.getElementById("tagPickerSelected").addEventListener("click", toggleTagDropdown);
+  document.getElementById("tagSearchInput").addEventListener("input", e => {
+    renderTagOptions(e.target.value.toLowerCase());
+  });
+  document.addEventListener("click", e => {
+    if (!document.getElementById("tagPicker").contains(e.target)) {
+      document.getElementById("tagPickerDropdown").classList.remove("open");
+    }
+    const ftpPicker = e.target.closest(".form-tag-picker");
+    document.querySelectorAll(".ftp-dropdown.open").forEach(dd => {
+      if (!ftpPicker || !ftpPicker.contains(dd)) dd.classList.remove("open");
+    });
+  });
+  document.getElementById("modalOverlay").addEventListener("click", e => {
+    if (e.target === document.getElementById("modalOverlay")) closeModal();
+  });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") { closeSettings(); closeModal(); closeConfirm(); } });
+  document.getElementById("settingsOverlay").addEventListener("click", e => {
+    if (e.target === document.getElementById("settingsOverlay")) closeSettings();
+  });
+}
+
+// ── Load & render ───────────────────────────────────
+async function loadStars() {
+  const params = new URLSearchParams();
+  const comp = document.getElementById("filterCompetency").value;
+  const co = document.getElementById("filterCompany").value;
+  const recency = document.getElementById("filterRecency").value;
+  const q = document.getElementById("searchInput").value.trim();
+  if (comp) params.set("competency", comp);
+  if (co) params.set("company", co);
+  if (recency) params.set("recency", recency);
+  if (q) params.set("q", q);
+  if (selectedTags.size) params.set("tags", Array.from(selectedTags).join(","));
+
+  const res = await (await fetch("/api/stars?" + params.toString())).json();
+  allExamples = res.examples;
+
+  const filtered = allExamples.filter(e => activeCompletenessFilters.has(e.completeness));
+  sortExamples(filtered);
+
+  renderStats(res.total, filtered.length, filtered);
+  renderCards(filtered);
+  updateClearButton();
+}
+
+function sortExamples(arr) {
+  const val = document.getElementById("sortSelect").value;
+  const [field, dir] = val.split("-");
+  const mult = dir === "desc" ? -1 : 1;
+  arr.sort((a, b) => {
+    let av, bv;
+    if (field === "title") { av = (a.title || "").toLowerCase(); bv = (b.title || "").toLowerCase(); }
+    else if (field === "company") { av = (a.company || "").toLowerCase(); bv = (b.company || "").toLowerCase(); }
+    else if (field === "competency") { av = (a.primary_competency || "").toLowerCase(); bv = (b.primary_competency || "").toLowerCase(); }
+    else if (field === "completeness") { av = a.completeness === "complete" ? 0 : 1; bv = b.completeness === "complete" ? 0 : 1; }
+    else if (field === "recency") { av = a.recency === "recent" ? 0 : 1; bv = b.recency === "recent" ? 0 : 1; }
+    else { av = ""; bv = ""; }
+    if (av < bv) return -1 * mult;
+    if (av > bv) return 1 * mult;
+    return 0;
+  });
+}
+
+function renderStats(total, shown, examples) {
+  const complete = examples.filter(e => e.completeness === "complete").length;
+  const inProgress = examples.filter(e => e.completeness === "in_progress").length;
+  document.getElementById("stats").innerHTML = `
+    <span>Showing <span class="count">${shown}</span> of ${total}</span>
+    <span class="stat-badge stat-complete">${complete} complete</span>
+    <span class="stat-badge stat-in_progress">${inProgress} in progress</span>
+  `;
+}
+
+function renderCards(examples) {
+  const grid = document.getElementById("cardGrid");
+  if (examples.length === 0) {
+    grid.innerHTML = '<div class="empty-state"><h3>No matching examples</h3><p>Try adjusting your filters or add a new STAR example</p></div>';
+    return;
+  }
+  grid.innerHTML = examples.map(e => `
+    <div class="card" onclick="openDetail('${e.id}')">
+      <div class="card-title">${esc(e.title)}</div>
+      <div class="card-meta">
+        <span>${esc(e.company)}</span>
+        <span>${esc(e.role || "")}</span>
+        <span>${esc(e.period || "")}</span>
+      </div>
+      ${e.situation ? `<div class="card-snippet">${esc(e.situation)}</div>` : ""}
+      <div class="card-badges">
+        <span class="badge badge-${e.completeness}">${completenessLabel(e.completeness)}</span>
+        <span class="badge badge-${e.recency || 'old'}">${recencyLabel(e.recency || 'old')}</span>
+        <span class="badge badge-competency">${esc(e.primary_competency)}</span>
+      </div>
+    </div>
+  `).join("");
+}
+
+// ── Detail modal ────────────────────────────────────
+function openDetail(id) {
+  currentStar = allExamples.find(e => e.id === id);
+  if (!currentStar) return;
+  editMode = false;
+  renderModal();
+  document.getElementById("modalOverlay").classList.add("open");
+}
+
+function closeModal() {
+  document.getElementById("modalOverlay").classList.remove("open");
+  currentStar = null; editMode = false;
+}
+
+function renderModal() {
+  const e = currentStar;
+  const m = document.getElementById("modal");
+
+  const reviewNotesHtml = e.review_notes ?
+    `<div class="review-notes"><strong>Review Notes</strong>${renderMd(e.review_notes)}</div>` : "";
+
+  const metricsHtml = (e.key_metrics && e.key_metrics.length) ?
+    `<ul class="metrics-list">${e.key_metrics.map(m => `<li>${esc(m)}</li>`).join("")}</ul>` : "<em style='color:var(--grey)'>None</em>";
+
+  const tagsHtml = (e.tags && e.tags.length) ?
+    `<div class="tags-display">${e.tags.map(t => `<span class="tag-pill">${esc(t)}</span>`).join("")}</div>` : "";
+
+  const secondaryHtml = (e.secondary_competencies && e.secondary_competencies.length) ?
+    e.secondary_competencies.map(c => `<span class="badge badge-competency" style="font-size:10px">${esc(c)}</span>`).join(" ") : "";
+
+  if (!editMode) {
+    m.innerHTML = `
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+      <div class="modal-header">
+        <div>
+          <div class="modal-title">${esc(e.title)}</div>
+          <div class="modal-header-meta">
+            ${esc(e.company)} &middot; ${esc(e.role || "")} &middot; ${esc(e.period || "")}
+            &nbsp; <span class="badge badge-${e.completeness}">${completenessLabel(e.completeness)}</span>
+          </div>
+          <div style="margin-top:6px">
+            <span class="badge badge-competency">${esc(e.primary_competency)}</span>
+            ${secondaryHtml}
+          </div>
+        </div>
+      </div>
+      ${reviewNotesHtml}
+      <div class="star-section">
+        <div class="star-section-label"><span class="letter">S</span> Situation</div>
+        <div class="star-text">${renderMd(e.situation || "")}</div>
+      </div>
+      <div class="star-section">
+        <div class="star-section-label"><span class="letter">T</span> Task</div>
+        <div class="star-text">${renderMd(e.task || "")}</div>
+      </div>
+      <div class="star-section">
+        <div class="star-section-label"><span class="letter">A</span> Action</div>
+        <div class="star-text">${renderMd(e.action || "")}</div>
+      </div>
+      <div class="star-section">
+        <div class="star-section-label"><span class="letter">R</span> Result</div>
+        <div class="star-text">${renderMd(e.result || "")}</div>
+      </div>
+      <div class="star-section">
+        <div class="star-section-label">Key Metrics</div>
+        ${metricsHtml}
+      </div>
+      <div class="star-section">
+        <div class="star-section-label">Tags</div>
+        ${tagsHtml}
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-primary" onclick="enterEdit()">Edit</button>
+        <button class="btn btn-ai" id="btnAiFeedback" onclick="getAIFeedback('${e.id}')">Get AI Feedback</button>
+        <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+        <span class="spacer"></span>
+        <button class="btn btn-danger" onclick="confirmDeleteStar('${e.id}', '${escAttr(e.title)}')">Delete</button>
+      </div>
+    `;
+  } else {
+    renderEditMode();
+  }
+}
+
+function enterEdit() { editMode = true; renderModal(); }
+
+function renderEditMode() {
+  const e = currentStar;
+  const m = document.getElementById("modal");
+
+  // Build unified competency list: primary first, then secondaries, deduped
+  const allComps = [e.primary_competency, ...(e.secondary_competencies || [])].filter(Boolean);
+  const uniqueComps = [...new Set(allComps)];
+
+  m.innerHTML = `
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <h2 style="font-size:18px; margin-bottom:16px; color:var(--dark);">Editing: ${esc(e.id)}</h2>
+
+    <div class="edit-row">
+      <label>Title</label>
+      <input type="text" id="ed_title" value="${escAttr(e.title || "")}">
+    </div>
+    <div class="edit-row">
+      <label>Competencies</label>
+      <div class="form-tag-picker" id="edCompPicker"></div>
+      <small style="color:var(--grey); margin-top:4px; display:block">First selected is shown on the card</small>
+    </div>
+    <div class="edit-row">
+      <label>Company</label>
+      <input type="text" id="ed_company" value="${escAttr(e.company || "")}" list="companyList">
+      <datalist id="companyList">${meta.companies.map(c => `<option value="${esc(c)}">`).join("")}</datalist>
+    </div>
+    <div class="edit-row">
+      <label>Role</label>
+      <input type="text" id="ed_role" value="${escAttr(e.role || "")}">
+    </div>
+    <div class="edit-row">
+      <label>Period</label>
+      <input type="text" id="ed_period" value="${escAttr(e.period || "")}">
+    </div>
+    <div class="edit-row">
+      <label>Recency</label>
+      <select id="ed_recency">
+        <option value="recent" ${e.recency === "recent" ? "selected" : ""}>Recent</option>
+        <option value="old" ${e.recency === "old" ? "selected" : ""}>Not Recent</option>
+      </select>
+    </div>
+    <div class="edit-row">
+      <label>STAR Completeness</label>
+      <select id="ed_completeness">
+        <option value="in_progress" ${e.completeness === "in_progress" ? "selected" : ""}>In Progress</option>
+        <option value="complete" ${e.completeness === "complete" ? "selected" : ""}>Complete</option>
+      </select>
+    </div>
+    <div class="edit-row">
+      <label>Tags</label>
+      <div class="form-tag-picker" id="edTagPicker"></div>
+    </div>
+
+    <div class="star-section">
+      <div class="star-section-label"><span class="letter">S</span> Situation</div>
+      <textarea class="star-textarea" id="ed_situation">${esc(e.situation || "")}</textarea>
+    </div>
+    <div class="star-section">
+      <div class="star-section-label"><span class="letter">T</span> Task</div>
+      <textarea class="star-textarea" id="ed_task">${esc(e.task || "")}</textarea>
+    </div>
+    <div class="star-section">
+      <div class="star-section-label"><span class="letter">A</span> Action</div>
+      <textarea class="star-textarea" id="ed_action" style="min-height:150px">${esc(e.action || "")}</textarea>
+    </div>
+    <div class="star-section">
+      <div class="star-section-label"><span class="letter">R</span> Result</div>
+      <textarea class="star-textarea" id="ed_result">${esc(e.result || "")}</textarea>
+    </div>
+    <div class="star-section">
+      <div class="star-section-label">Key Metrics (one per line)</div>
+      <textarea class="star-textarea" id="ed_metrics" style="min-height:60px">${esc((e.key_metrics || []).join("\n"))}</textarea>
+    </div>
+    <div class="star-section">
+      <div class="star-section-label">Review Notes</div>
+      <textarea class="star-textarea" id="ed_review_notes" style="min-height:60px">${esc(e.review_notes || "")}</textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-save" onclick="saveEdit()">Save Changes</button>
+      <button class="btn btn-secondary" onclick="editMode=false; renderModal()">Cancel</button>
+    </div>
+  `;
+  buildFormTagPicker("edTagPicker", e.tags || []);
+  buildFormPicker("edCompPicker", uniqueComps, () => meta.competencies || [], false);
+}
+
+async function saveEdit() {
+  const id = currentStar.id;
+  const tags = getFormTags();
+  const metrics = document.getElementById("ed_metrics").value.split("\n").map(m => m.trim()).filter(Boolean);
+
+  const body = {
+    title: document.getElementById("ed_title").value,
+    primary_competency: fpGetValues("edCompPicker")[0] || "",
+    secondary_competencies: fpGetValues("edCompPicker").slice(1),
+    company: document.getElementById("ed_company").value,
+    role: document.getElementById("ed_role").value,
+    period: document.getElementById("ed_period").value,
+    recency: document.getElementById("ed_recency").value,
+    completeness: document.getElementById("ed_completeness").value,
+    tags: tags,
+    situation: document.getElementById("ed_situation").value,
+    task: document.getElementById("ed_task").value,
+    action: document.getElementById("ed_action").value,
+    result: document.getElementById("ed_result").value,
+    key_metrics: metrics,
+    review_notes: document.getElementById("ed_review_notes").value,
+  };
+
+  const res = await fetch(`/api/stars/${id}`, {
+    method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),
+  });
+  const data = await res.json();
+
+  if (data.status === "saved") {
+    Object.assign(currentStar, data.example);
+    editMode = false;
+    renderModal();
+    loadStars();
+    refreshMeta();
+    showToast("Saved!");
+  } else {
+    showToast("Error: " + (data.error || "Save failed"));
+  }
+}
+
+// ── Delete STAR ─────────────────────────────────────
+function confirmDeleteStar(id, title) {
+  showConfirm(
+    "Delete STAR Example",
+    `Are you sure you want to delete "${title}"? This cannot be undone.`,
+    async () => {
+      const res = await fetch(`/api/stars/${id}`, { method: "DELETE" });
+      const data = await res.json();
+      if (data.status === "deleted") {
+        closeModal();
+        await loadStars();
+        refreshMeta();
+        showToast("Deleted");
+      } else {
+        showToast("Error: " + (data.error || "Delete failed"));
+      }
+    }
+  );
+}
+
+// ── Confirm dialog ──────────────────────────────────
+let confirmCallback = null;
+function showConfirm(title, message, onConfirm) {
+  confirmCallback = onConfirm;
+  document.getElementById("confirmBox").innerHTML = `
+    <h3>${esc(title)}</h3>
+    <p>${esc(message)}</p>
+    <div class="confirm-actions">
+      <button class="btn btn-danger" onclick="executeConfirm()" style="background:var(--red);color:#fff;border:none;">Delete</button>
+      <button class="btn btn-secondary" onclick="closeConfirm()">Cancel</button>
+    </div>
+  `;
+  document.getElementById("confirmOverlay").classList.add("open");
+}
+function closeConfirm() {
+  document.getElementById("confirmOverlay").classList.remove("open");
+  confirmCallback = null;
+}
+function executeConfirm() {
+  if (confirmCallback) confirmCallback();
+  closeConfirm();
+}
+
+// ── Add New STAR ────────────────────────────────────
+function openNew() {
+  currentStar = null;
+  editMode = false;
+  const m = document.getElementById("modal");
+
+  m.innerHTML = `
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <h2 style="font-size:18px; margin-bottom:16px; color:var(--dark);">Add New STAR Example</h2>
+
+    <div class="edit-row">
+      <label>Title</label>
+      <input type="text" id="new_title" placeholder="Give this STAR a descriptive title">
+    </div>
+    <div class="edit-row">
+      <label>Competencies</label>
+      <div class="form-tag-picker" id="newCompPicker"></div>
+      <small style="color:var(--grey); margin-top:4px; display:block">First selected is shown on the card</small>
+    </div>
+    <div class="edit-row">
+      <label>Company</label>
+      <input type="text" id="new_company" placeholder="e.g. Company name" list="newCompanyList">
+      <datalist id="newCompanyList">${meta.companies.map(c => `<option value="${esc(c)}">`).join("")}</datalist>
+    </div>
+    <div class="edit-row">
+      <label>Role</label>
+      <input type="text" id="new_role" placeholder="e.g. Strategy Manager">
+    </div>
+    <div class="edit-row">
+      <label>Period</label>
+      <input type="text" id="new_period" placeholder="e.g. 2022-2023">
+    </div>
+    <div class="edit-row">
+      <label>Recency</label>
+      <select id="new_recency">
+        <option value="recent">Recent</option>
+        <option value="old">Not Recent</option>
+      </select>
+    </div>
+    <div class="edit-row">
+      <label>STAR Completeness</label>
+      <select id="new_completeness">
+        <option value="in_progress" selected>In Progress</option>
+        <option value="complete">Complete</option>
+      </select>
+    </div>
+    <div class="edit-row">
+      <label>Tags</label>
+      <div class="form-tag-picker" id="newTagPicker"></div>
+    </div>
+
+    <div class="star-section">
+      <div class="star-section-label"><span class="letter">S</span> Situation</div>
+      <textarea class="star-textarea" id="new_situation" placeholder="Describe the context and background..."></textarea>
+    </div>
+    <div class="star-section">
+      <div class="star-section-label"><span class="letter">T</span> Task</div>
+      <textarea class="star-textarea" id="new_task" placeholder="What was your specific responsibility or goal?"></textarea>
+    </div>
+    <div class="star-section">
+      <div class="star-section-label"><span class="letter">A</span> Action</div>
+      <textarea class="star-textarea" id="new_action" style="min-height:150px" placeholder="What steps did you take?"></textarea>
+    </div>
+    <div class="star-section">
+      <div class="star-section-label"><span class="letter">R</span> Result</div>
+      <textarea class="star-textarea" id="new_result" placeholder="What was the outcome? Include metrics where possible."></textarea>
+    </div>
+    <div class="star-section">
+      <div class="star-section-label">Key Metrics (one per line)</div>
+      <textarea class="star-textarea" id="new_metrics" style="min-height:60px" placeholder="e.g. 15% cost reduction achieved"></textarea>
+    </div>
+    <div class="star-section">
+      <div class="star-section-label">Review Notes</div>
+      <textarea class="star-textarea" id="new_review_notes" style="min-height:60px" placeholder="Notes for later enrichment..."></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-save" onclick="saveNew()">Create STAR</button>
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+    </div>
+  `;
+  document.getElementById("modalOverlay").classList.add("open");
+  buildFormTagPicker("newTagPicker", []);
+  buildFormPicker("newCompPicker", [], () => meta.competencies || [], false);
+}
+
+async function saveNew() {
+  const title = document.getElementById("new_title").value.trim();
+  if (!title) { showToast("Title is required"); return; }
+
+  const tags = getFormTags();
+  const metrics = document.getElementById("new_metrics").value.split("\n").map(m => m.trim()).filter(Boolean);
+
+  const body = {
+    title: title,
+    primary_competency: fpGetValues("newCompPicker")[0] || "",
+    secondary_competencies: fpGetValues("newCompPicker").slice(1),
+    company: document.getElementById("new_company").value.trim(),
+    role: document.getElementById("new_role").value.trim(),
+    period: document.getElementById("new_period").value.trim(),
+    recency: document.getElementById("new_recency").value,
+    completeness: document.getElementById("new_completeness").value,
+    tags: tags,
+    situation: document.getElementById("new_situation").value,
+    task: document.getElementById("new_task").value,
+    action: document.getElementById("new_action").value,
+    result: document.getElementById("new_result").value,
+    key_metrics: metrics,
+    review_notes: document.getElementById("new_review_notes").value,
+  };
+
+  const res = await fetch("/api/stars", {
+    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),
+  });
+  const data = await res.json();
+
+  if (data.status === "created") {
+    closeModal();
+    await loadStars();
+    refreshMeta();
+    showToast("Created " + data.example.id);
+  } else {
+    showToast("Error: " + (data.error || "Create failed"));
+  }
+}
+
+// ── Competency Manager ──────────────────────────────
+async function openCompetencyManager() {
+  currentStar = null; editMode = false;
+  const m = document.getElementById("modal");
+  const res = await fetch("/api/competencies");
+  const data = await res.json();
+  const comps = data.competencies || [];
+
+  m.innerHTML = `
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <h2 style="font-size:18px; margin-bottom:16px; color:var(--dark);">Manage Competencies</h2>
+    <ul class="comp-list" id="compList">
+      ${comps.map((c, i) => `
+        <li class="comp-item" id="comp-item-${i}">
+          <div class="comp-item-info">
+            <div class="comp-item-name">${esc(c.name)}</div>
+            <div class="comp-item-desc">${esc(c.description)}</div>
+          </div>
+          <div class="comp-item-actions">
+            <button class="btn-edit-comp" onclick="editCompetency(${i}, '${escAttr(c.name)}', '${escAttr(c.description)}')">Edit</button>
+            <button class="btn-del-comp" onclick="deleteCompetency(${i}, '${escAttr(c.name)}')">Delete</button>
+          </div>
+        </li>
+      `).join("")}
+    </ul>
+    <div class="comp-add-form">
+      <input type="text" id="newCompName" placeholder="Competency name">
+      <input type="text" id="newCompDesc" placeholder="Description">
+      <button class="btn btn-primary" onclick="addCompetency()">Add</button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+    </div>
+  `;
+  document.getElementById("modalOverlay").classList.add("open");
+}
+
+async function addCompetency() {
+  const name = document.getElementById("newCompName").value.trim();
+  const desc = document.getElementById("newCompDesc").value.trim();
+  if (!name) { showToast("Name is required"); return; }
+
+  const res = await fetch("/api/competencies", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, description: desc }),
+  });
+  const data = await res.json();
+  if (data.status === "created") {
+    refreshMeta();
+    openCompetencyManager();
+    showToast("Added");
+  } else {
+    showToast("Error: " + (data.error || "Failed"));
+  }
+}
+
+function editCompetency(idx, name, desc) {
+  const item = document.getElementById(`comp-item-${idx}`);
+  item.innerHTML = `
+    <div class="comp-item-info" style="display:flex; gap:8px; flex:1; flex-wrap:wrap;">
+      <input type="text" id="editCompName-${idx}" value="${escAttr(name)}" style="flex:1; min-width:150px; padding:6px 10px; border:1px solid var(--border); border-radius:6px; font-size:13px;">
+      <input type="text" id="editCompDesc-${idx}" value="${escAttr(desc)}" style="flex:2; min-width:200px; padding:6px 10px; border:1px solid var(--border); border-radius:6px; font-size:13px;">
+    </div>
+    <div class="comp-item-actions">
+      <button class="btn-edit-comp" onclick="saveCompetency(${idx})">Save</button>
+      <button class="btn-del-comp" onclick="openCompetencyManager()" style="color:var(--grey);border-color:var(--grey)">Cancel</button>
+    </div>
+  `;
+}
+
+async function saveCompetency(idx) {
+  const name = document.getElementById(`editCompName-${idx}`).value.trim();
+  const desc = document.getElementById(`editCompDesc-${idx}`).value.trim();
+  if (!name) { showToast("Name is required"); return; }
+
+  const res = await fetch(`/api/competencies/${idx}`, {
+    method: "PUT", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, description: desc }),
+  });
+  const data = await res.json();
+  if (data.status === "saved") {
+    refreshMeta();
+    openCompetencyManager();
+    showToast("Updated");
+  } else {
+    showToast("Error: " + (data.error || "Failed"));
+  }
+}
+
+async function deleteCompetency(idx, name) {
+  showConfirm("Delete Competency", `Delete "${name}"? This only works if no examples use it.`, async () => {
+    const res = await fetch(`/api/competencies/${idx}`, { method: "DELETE" });
+    const data = await res.json();
+    if (data.status === "deleted") {
+      refreshMeta();
+      openCompetencyManager();
+      showToast("Deleted");
+    } else {
+      showToast("Error: " + (data.error || "Failed"));
+    }
+  });
+}
+
+async function refreshMeta() {
+  meta = await (await fetch("/api/meta")).json();
+  repopulateCompanyDropdown();
+  repopulateCompetencyDropdown();
+  renderTagOptions();
+}
+
+function repopulateCompanyDropdown() {
+  const co = document.getElementById("filterCompany");
+  const current = co.value;
+  co.innerHTML = '<option value="">All companies</option>';
+  meta.companies.forEach(c => {
+    const o = document.createElement("option"); o.value = c; o.textContent = c; co.appendChild(o);
+  });
+  co.value = current;
+}
+
+function repopulateCompetencyDropdown() {
+  const comp = document.getElementById("filterCompetency");
+  const current = comp.value;
+  comp.innerHTML = '<option value="">All competencies</option>';
+  meta.competencies.forEach(c => {
+    const o = document.createElement("option"); o.value = c; o.textContent = c; comp.appendChild(o);
+  });
+  comp.value = current;
+}
+
+// ── Tag picker ──────────────────────────────────────
+function toggleTagDropdown() {
+  const dd = document.getElementById("tagPickerDropdown");
+  dd.classList.toggle("open");
+  if (dd.classList.contains("open")) {
+    document.getElementById("tagSearchInput").value = "";
+    renderTagOptions();
+    document.getElementById("tagSearchInput").focus();
+  }
+}
+
+function renderTagOptions(filter) {
+  const list = document.getElementById("tagOptionsList");
+  const tags = (meta.tags || []).filter(t => !filter || t.toLowerCase().includes(filter));
+  list.innerHTML = tags.map(t => {
+    const sel = selectedTags.has(t) ? "selected" : "";
+    const check = selectedTags.has(t) ? "&#10003;" : "";
+    return `<div class="tp-option ${sel}" data-tag="${esc(t)}" onclick="toggleTag('${escAttr(t)}')">
+      <span class="tp-check">${check}</span> ${esc(t)}
+    </div>`;
+  }).join("");
+  if (tags.length === 0) list.innerHTML = '<div style="padding:8px 10px;color:var(--grey);font-size:12px">No tags found</div>';
+}
+
+function toggleTag(tag) {
+  if (selectedTags.has(tag)) selectedTags.delete(tag);
+  else selectedTags.add(tag);
+  renderSelectedTags();
+  renderTagOptions(document.getElementById("tagSearchInput").value.toLowerCase());
+  loadStars();
+}
+
+function removeTag(tag) {
+  selectedTags.delete(tag);
+  renderSelectedTags();
+  renderTagOptions(document.getElementById("tagSearchInput").value.toLowerCase());
+  loadStars();
+}
+
+function renderSelectedTags() {
+  const container = document.getElementById("tagPickerSelected");
+  const placeholder = document.getElementById("tagPlaceholder");
+  container.querySelectorAll(".tp-pill").forEach(p => p.remove());
+  if (selectedTags.size === 0) {
+    placeholder.style.display = "";
+  } else {
+    placeholder.style.display = "none";
+    selectedTags.forEach(t => {
+      const pill = document.createElement("span");
+      pill.className = "tp-pill";
+      pill.innerHTML = `${esc(t)} <span class="tp-x" onclick="event.stopPropagation(); removeTag('${escAttr(t)}')">&times;</span>`;
+      container.insertBefore(pill, placeholder);
+    });
+  }
+}
+
+// ── Form picker (multi-instance) ────────────────────
+const fpInstances = {};
+
+function buildFormPicker(containerId, existingItems, optionsFn, allowCustom) {
+  const inst = { set: new Set(existingItems || []), optionsFn: optionsFn || (() => []), allowCustom: allowCustom !== false };
+  fpInstances[containerId] = inst;
+  const container = document.getElementById(containerId);
+  const inputId = containerId + "_input";
+  const pillsId = containerId + "_pills";
+  const ddId = containerId + "_dd";
+  container.innerHTML = `
+    <div class="form-tag-box" onclick="document.getElementById('${inputId}').focus()">
+      <span id="${pillsId}"></span>
+      <input type="text" class="ftp-input" id="${inputId}" placeholder="${inst.set.size ? '' : 'Type to search...'}">
+    </div>
+    <div class="ftp-dropdown" id="${ddId}"></div>
+  `;
+  fpRenderPills(containerId);
+  fpRenderDropdown(containerId);
+
+  const input = document.getElementById(inputId);
+  input.addEventListener("input", () => fpRenderDropdown(containerId, input.value.toLowerCase()));
+  input.addEventListener("focus", () => {
+    document.getElementById(ddId).classList.add("open");
+    fpRenderDropdown(containerId, input.value.toLowerCase());
+  });
+  input.addEventListener("keydown", e => {
+    if (e.key === "Enter" && inst.allowCustom) {
+      e.preventDefault();
+      const v = input.value.trim().toLowerCase();
+      if (v && !inst.set.has(v)) {
+        inst.set.add(v);
+        input.value = "";
+        fpRenderPills(containerId);
+        fpRenderDropdown(containerId);
+      }
+    }
+  });
+}
+
+function fpRenderPills(id) {
+  const inst = fpInstances[id]; if (!inst) return;
+  const pills = document.getElementById(id + "_pills"); if (!pills) return;
+  pills.innerHTML = Array.from(inst.set).map(t =>
+    `<span class="ftp-pill">${esc(t)}<span class="ftp-x" onclick="event.stopPropagation(); fpRemove('${id}','${escAttr(t)}')">&times;</span></span>`
+  ).join("");
+  const input = document.getElementById(id + "_input");
+  if (input) input.placeholder = inst.set.size ? "" : "Type to search...";
+}
+
+function fpRenderDropdown(id, filter) {
+  const inst = fpInstances[id]; if (!inst) return;
+  const dd = document.getElementById(id + "_dd"); if (!dd) return;
+  const allItems = inst.optionsFn();
+  const items = allItems.filter(t => !filter || t.toLowerCase().includes(filter));
+  dd.innerHTML = items.map(t => {
+    const sel = inst.set.has(t) ? "selected" : "";
+    const check = inst.set.has(t) ? "&#10003;" : "";
+    return `<div class="ftp-option ${sel}" onclick="fpToggle('${id}','${escAttr(t)}')">
+      <span class="ftp-check">${check}</span> ${esc(t)}
+    </div>`;
+  }).join("");
+  if (items.length === 0 && filter && inst.allowCustom) {
+    dd.innerHTML = `<div class="ftp-option" onclick="fpAdd('${id}','${escAttr(filter)}')">
+      <span class="ftp-check">+</span> Add "${esc(filter)}"
+    </div>`;
+  }
+}
+
+function fpToggle(id, item) {
+  const inst = fpInstances[id]; if (!inst) return;
+  if (inst.set.has(item)) inst.set.delete(item); else inst.set.add(item);
+  fpRenderPills(id);
+  fpRenderDropdown(id, document.getElementById(id + "_input")?.value.toLowerCase());
+}
+
+function fpRemove(id, item) {
+  const inst = fpInstances[id]; if (!inst) return;
+  inst.set.delete(item);
+  fpRenderPills(id);
+  fpRenderDropdown(id, document.getElementById(id + "_input")?.value.toLowerCase());
+}
+
+function fpAdd(id, item) {
+  const inst = fpInstances[id]; if (!inst) return;
+  if (item && !inst.set.has(item)) inst.set.add(item);
+  const input = document.getElementById(id + "_input");
+  if (input) input.value = "";
+  fpRenderPills(id);
+  fpRenderDropdown(id);
+}
+
+function fpGetValues(id) { const inst = fpInstances[id]; return inst ? Array.from(inst.set) : []; }
+
+// Backwards-compat wrappers
+function buildFormTagPicker(cid, tags) { buildFormPicker(cid, tags, () => meta.tags || [], true); }
+function getFormTags() { return fpGetValues("edTagPicker").length ? fpGetValues("edTagPicker") : fpGetValues("newTagPicker"); }
+
+function updateClearButton() {
+  const anyActive =
+    document.getElementById("searchInput").value.trim() !== "" ||
+    document.getElementById("filterCompetency").value !== "" ||
+    document.getElementById("filterCompany").value !== "" ||
+    document.getElementById("filterRecency").value !== "" ||
+    selectedTags.size > 0 ||
+    activeCompletenessFilters.size < 2;
+  document.getElementById("btnClear").classList.toggle("visible", anyActive);
+}
+
+// ── Helpers ─────────────────────────────────────────
+function clearFilters() {
+  document.getElementById("searchInput").value = "";
+  document.getElementById("filterCompetency").value = "";
+  document.getElementById("filterCompany").value = "";
+  document.getElementById("filterRecency").value = "";
+  selectedTags.clear();
+  renderSelectedTags();
+  document.getElementById("tagPickerDropdown").classList.remove("open");
+  activeCompletenessFilters = new Set(["complete", "in_progress"]);
+  document.querySelectorAll("#completenessToggles button").forEach(btn => {
+    btn.classList.add("active-" + btn.dataset.value);
+  });
+  loadStars();
+}
+
+function esc(s) { const d = document.createElement("div"); d.textContent = s || ""; return d.innerHTML; }
+function escAttr(s) { return String(s || "").replace(/"/g, "&quot;").replace(/'/g, "&#39;").replace(/</g, "&lt;"); }
+function renderMd(s) { if (!s) return ""; try { return marked.parse(s); } catch { return esc(s); } }
+
+function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }
+
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 2000);
+}
+
+// ── AI Settings ─────────────────────────────────────
+const AI_MODELS = {
+  openai: [
+    { value: "gpt-4o-mini", label: "GPT-4o Mini" },
+    { value: "gpt-4o", label: "GPT-4o" },
+    { value: "gpt-4.1-mini", label: "GPT-4.1 Mini" },
+    { value: "gpt-4.1", label: "GPT-4.1" },
+  ],
+  anthropic: [
+    { value: "claude-sonnet-4-20250514", label: "Claude Sonnet 4" },
+    { value: "claude-haiku-4-20250414", label: "Claude Haiku 4" },
+    { value: "claude-opus-4-20250514", label: "Claude Opus 4" },
+  ],
+};
+
+function loadSettings() {
+  return {
+    provider: localStorage.getItem("ai_provider") || "openai",
+    model: localStorage.getItem("ai_model") || "",
+    apiKey: localStorage.getItem("ai_api_key") || "",
+  };
+}
+
+function openSettings() {
+  const s = loadSettings();
+  document.getElementById("settingsProvider").value = s.provider;
+  onProviderChange();
+  if (s.model) document.getElementById("settingsModel").value = s.model;
+  document.getElementById("settingsApiKey").value = s.apiKey;
+  document.getElementById("settingsOverlay").classList.add("open");
+}
+
+function closeSettings() {
+  document.getElementById("settingsOverlay").classList.remove("open");
+}
+
+function onProviderChange() {
+  const provider = document.getElementById("settingsProvider").value;
+  const modelSelect = document.getElementById("settingsModel");
+  const models = AI_MODELS[provider] || [];
+  modelSelect.innerHTML = models.map(m => `<option value="${m.value}">${m.label}</option>`).join("");
+}
+
+function saveSettings() {
+  const provider = document.getElementById("settingsProvider").value;
+  const model = document.getElementById("settingsModel").value;
+  const apiKey = document.getElementById("settingsApiKey").value.trim();
+  localStorage.setItem("ai_provider", provider);
+  localStorage.setItem("ai_model", model);
+  localStorage.setItem("ai_api_key", apiKey);
+  closeSettings();
+  showToast("Settings saved");
+}
+
+// ── AI Feedback ─────────────────────────────────────
+async function getAIFeedback(starId) {
+  const s = loadSettings();
+  if (!s.apiKey) {
+    showToast("Please configure your API key first");
+    openSettings();
+    return;
+  }
+
+  const btn = document.getElementById("btnAiFeedback");
+  btn.disabled = true;
+  btn.innerHTML = '<span class="ai-loading"></span> Reviewing...';
+
+  try {
+    const res = await fetch(`/api/ai-review/${starId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ api_key: s.apiKey, provider: s.provider, model: s.model }),
+    });
+    const data = await res.json();
+
+    if (data.error) {
+      showToast("Error: " + data.error);
+      return;
+    }
+
+    currentStar.review_notes = data.review_notes;
+    renderModal();
+    loadStars();
+    showToast("AI review complete");
+  } catch (err) {
+    showToast("Error: " + err.message);
+  } finally {
+    const btn2 = document.getElementById("btnAiFeedback");
+    if (btn2) { btn2.disabled = false; btn2.textContent = "Get AI Feedback"; }
+  }
+}
+
+// ── Go ──────────────────────────────────────────────
+onProviderChange();
+init();
+</script>
+</body>
+</html>
