@@ -240,13 +240,13 @@
   .backup-banner {
     position: fixed; top: 0; left: 0; right: 0; z-index: 180;
     display: none; align-items: center; justify-content: center; gap: 12px;
-    padding: 10px 20px; background: #fef3cd; border-bottom: 2px solid #f0c040;
-    color: #664d03; font-size: 14px; font-weight: 500;
+    padding: 10px 20px; background: var(--pink-strong); border-bottom: 2px solid var(--pink-strong);
+    color: var(--dark); font-size: 14px; font-weight: 500;
   }
   .backup-banner.show { display: flex; }
   .backup-banner button { font-size: 13px; cursor: pointer; }
-  .backup-banner .bb-export { background: var(--accent); color: #fff; border: none; border-radius: 6px; padding: 5px 14px; font-weight: 600; }
-  .backup-banner .bb-dismiss { background: none; border: none; font-size: 18px; color: #664d03; padding: 0 4px; }
+  .backup-banner .bb-export { background: #fef3cd; color: var(--dark); border: none; border-radius: 6px; padding: 5px 14px; font-weight: 600; }
+  .backup-banner .bb-dismiss { background: none; border: none; font-size: 18px; color: var(--dark); padding: 0 4px; }
 
   .empty-state { text-align: center; padding: 60px 20px; color: var(--grey); }
   .empty-state h3 { font-size: 18px; margin-bottom: 8px; color: var(--dark); }
@@ -519,7 +519,7 @@
 <!-- ── Backup banner ───────────────────────────────── -->
 <div class="backup-banner" id="backupBanner">
   <span>It's been a while since your last backup. Export your data to keep it safe.</span>
-  <button class="bb-export" onclick="openExportModal()">Export Now</button>
+  <button class="bb-export" onclick="openDataManager()">Back Up Now</button>
   <button class="bb-dismiss" onclick="dismissBackupBanner()" title="Dismiss">&times;</button>
 </div>
 
@@ -557,6 +557,7 @@
         <li>If you clear your browser data, <strong>your STARs will be permanently lost</strong> — even if the app is installed.</li>
         <li>Use <strong>Export JSON</strong> regularly to back up your data. The app will remind you every 2 days.</li>
         <li>To move data between devices, export on one and import on the other.</li>
+        <li><strong>Do not use this app in Incognito / Private Browsing mode</strong> — all data is erased when the window closes.</li>
       </ul>
     </div>
 
@@ -564,7 +565,7 @@
       <h4>Install as an App</h4>
       <ul>
         <li>Installing STAR Lab gives your data the best chance of surviving browser updates and storage cleanup.</li>
-        <li><strong>Chrome:</strong> click the install icon (⊕) in the address bar → Install.</li>
+        <li><strong>Chrome:</strong> click the install icon (a monitor with a download arrow) in the address bar → Install.</li>
         <li><strong>Safari on Mac:</strong> Share → Add to Dock.</li>
         <li>Once installed, the app opens in its own window and works offline.</li>
         <li>Even after installing, always keep a recent backup — clearing app/browser data will still erase your STARs.</li>
