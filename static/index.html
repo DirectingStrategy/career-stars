@@ -240,13 +240,13 @@
   .backup-banner {
     position: fixed; top: 0; left: 0; right: 0; z-index: 180;
     display: none; align-items: center; justify-content: center; gap: 12px;
-    padding: 10px 20px; background: #fef3cd; border-bottom: 2px solid #f0c040;
-    color: #664d03; font-size: 14px; font-weight: 500;
+    padding: 10px 20px; background: var(--pink-strong); border-bottom: 2px solid var(--pink-strong);
+    color: var(--dark); font-size: 14px; font-weight: 500;
   }
   .backup-banner.show { display: flex; }
   .backup-banner button { font-size: 13px; cursor: pointer; }
-  .backup-banner .bb-export { background: var(--accent); color: #fff; border: none; border-radius: 6px; padding: 5px 14px; font-weight: 600; }
-  .backup-banner .bb-dismiss { background: none; border: none; font-size: 18px; color: #664d03; padding: 0 4px; }
+  .backup-banner .bb-export { background: #fef3cd; color: var(--dark); border: none; border-radius: 6px; padding: 5px 14px; font-weight: 600; }
+  .backup-banner .bb-dismiss { background: none; border: none; font-size: 18px; color: var(--dark); padding: 0 4px; }
 
   .empty-state { text-align: center; padding: 60px 20px; color: var(--grey); }
   .empty-state h3 { font-size: 18px; margin-bottom: 8px; color: var(--dark); }
@@ -519,7 +519,7 @@
 <!-- ── Backup banner ───────────────────────────────── -->
 <div class="backup-banner" id="backupBanner">
   <span>It's been a while since your last backup. Export your data to keep it safe.</span>
-  <button class="bb-export" onclick="openExportModal()">Export Now</button>
+  <button class="bb-export" onclick="openDataManager()">Back Up Now</button>
   <button class="bb-dismiss" onclick="dismissBackupBanner()" title="Dismiss">&times;</button>
 </div>
 
