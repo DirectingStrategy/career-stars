@@ -534,7 +534,9 @@
     <div class="settings-row">
       <label>API Key</label>
       <input type="password" id="settingsApiKey" placeholder="sk-... or sk-ant-...">
-      <small>Stored in your browser only. Sent only to the AI provider.</small>
+      <small>Stored in your browser only. Sent only to the AI provider.<br>
+      Tip: Use a <strong>separate key</strong> with a <strong>low spending limit</strong> (e.g. $5/month) for this app.
+      See Help for more security tips.</small>
     </div>
     <div class="settings-actions">
       <button class="btn btn-save" onclick="saveSettings()">Save</button>
@@ -606,6 +608,17 @@
         <li>Open a STAR and click <strong>Get AI Feedback</strong> to get a coached review.</li>
         <li>Requires your own <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">OpenAI API key</a>. Enter it via the ⚙ Settings icon.</li>
         <li>Your key is stored only in your browser and sent directly to OpenAI — never to any server.</li>
+      </ul>
+    </div>
+
+    <div class="help-section">
+      <h4>Keeping Your API Key Safe</h4>
+      <ul>
+        <li>Create a <strong>separate API key</strong> just for this app — easy to revoke if needed.</li>
+        <li>Set a <strong>monthly spending limit</strong> (e.g. $5) in your OpenAI billing settings to cap exposure.</li>
+        <li>When creating the key, <strong>restrict permissions</strong> to Chat Completions only.</li>
+        <li><strong>Delete your key</strong> from Settings and revoke it in OpenAI when you no longer need AI reviews.</li>
+        <li>Avoid using this app on <strong>shared or public computers</strong> — localStorage is readable by anyone with access to your browser.</li>
       </ul>
     </div>
 
