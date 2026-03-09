@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>STAR Interview Prep</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#232d4c">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<title>STAR Lab</title>
 <style>
   :root {
     --dark: #232d4c; --grey: #7F8691; --pink-light: #FFE3E1; --pink-strong: #FE5F55;
@@ -58,6 +61,15 @@
     cursor: pointer;
   }
   .manage-link:hover { color: #fff; }
+  .sidebar-footer {
+    margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1);
+    text-align: center;
+  }
+  .sidebar-footer img { display: block; margin: 0 auto 8px; }
+  .sidebar-credit { font-size: 11px; color: var(--grey); text-align: center; }
+  .sidebar-credit a { color: var(--grey); text-decoration: none; }
+  .sidebar-credit a:hover { color: #fff; }
+  .sidebar-icon-row { display: flex; justify-content: center; gap: 8px; margin-bottom: 12px; }
 
   /* ── Stats bar ───────────────────────────────────── */
   .stats {
@@ -307,6 +319,37 @@
   .confirm-box .confirm-actions { display: flex; gap: 10px; justify-content: center; }
 
   /* ── Settings modal ─────────────────────────────── */
+  /* ── Help overlay ────────────────────────────────── */
+  .help-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(35,45,76,0.5);
+    z-index: 250; justify-content: center; align-items: center;
+  }
+  .help-overlay.open { display: flex; }
+  .help-box {
+    position: relative; background: var(--card); border-radius: 12px; padding: 28px 32px;
+    max-width: 560px; width: 92%; max-height: 85vh; overflow-y: auto;
+    box-shadow: 0 8px 40px rgba(35,45,76,0.25);
+  }
+  .help-box h3 { font-size: 18px; margin-bottom: 4px; color: var(--dark); }
+  .help-box .help-subtitle { font-size: 13px; color: var(--grey); margin-bottom: 20px; }
+  .help-section { margin-bottom: 20px; }
+  .help-section h4 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; color: var(--pink-strong); margin-bottom: 6px; }
+  .help-section p { font-size: 13px; line-height: 1.6; color: var(--text); margin-bottom: 6px; }
+  .help-section ul { padding-left: 18px; margin: 4px 0; }
+  .help-section li { font-size: 13px; line-height: 1.6; color: var(--text); margin-bottom: 3px; }
+  .help-section a { color: var(--pink-strong); }
+  .help-divider { border: none; border-top: 1px solid var(--border); margin: 4px 0 20px; }
+  .star-method { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+  .star-card { background: var(--bg); border-radius: 8px; padding: 10px 12px; }
+  .star-card strong { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 0.4px; color: var(--pink-strong); margin-bottom: 3px; }
+  .star-card span { font-size: 12px; color: var(--grey); line-height: 1.5; }
+  .btn-help {
+    background: none; border: none; color: var(--grey); font-size: 16px; font-weight: 700;
+    cursor: pointer; padding: 4px 6px; line-height: 1; border-radius: 50%;
+    width: 26px; height: 26px; display: flex; align-items: center; justify-content: center;
+  }
+  .btn-help:hover { color: #fff; background: rgba(255,255,255,0.1); }
+
   .settings-overlay {
     display: none; position: fixed; inset: 0; background: rgba(35,45,76,0.5);
     z-index: 250; justify-content: center; align-items: center;
@@ -331,8 +374,8 @@
   .btn-gear { background: none; border: none; color: var(--grey); font-size: 18px; cursor: pointer; padding: 4px; line-height: 1; }
   .btn-gear:hover { color: #fff; }
 
-  .btn-ai { background: #6366f1; color: #fff; }
-  .btn-ai:hover { background: #4f46e5; }
+  .btn-ai { background: var(--dark); color: #fff; }
+  .btn-ai:hover { background: #1a2238; }
   .btn-ai:disabled { opacity: 0.6; cursor: not-allowed; }
   .ai-loading { display: inline-block; width: 14px; height: 14px; border: 2px solid #fff; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 6px; }
   @keyframes spin { to { transform: rotate(360deg); } }
@@ -346,6 +389,15 @@
   .review-notes p:last-child { margin-bottom: 0; }
   .review-notes ul, .review-notes ol { padding-left: 20px; margin: 4px 0 6px; }
   .review-notes li { margin-bottom: 2px; }
+
+  /* ── Print ───────────────────────────────────────── */
+  @media print {
+    .sidebar, .main, .confirm-overlay, .settings-overlay, .toast,
+    .modal-actions, .modal-close { display: none !important; }
+    body { display: block; background: white; color: black; }
+    .modal-overlay.open { display: block !important; position: static; padding: 0; background: none; }
+    .modal { box-shadow: none; border-radius: 0; max-width: none; }
+  }
 </style>
 </head>
 <body>
@@ -353,10 +405,9 @@
 <!-- ── Sidebar ─────────────────────────────────────── -->
 <aside class="sidebar">
   <div class="sidebar-header">
-    <h1>STAR Interview Prep</h1>
-    <button class="btn-gear" onclick="openSettings()" title="AI Settings">&#9881;</button>
+    <h1>STAR Lab</h1>
   </div>
-  <div class="subtitle">Create and edit your examples</div>
+  <div class="subtitle">Build and refine your interview examples</div>
 
   <div class="filter-group">
     <label>Search</label>
@@ -407,6 +458,18 @@
   </div>
 
   <button class="btn-add" onclick="openNew()">+ Add New STAR</button>
+  <button class="btn btn-secondary" style="width:100%;margin-top:8px;font-size:12px;padding:8px" onclick="openDataManager()">Export / Import</button>
+  <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="handleImportFile(event)">
+
+  <div class="sidebar-footer">
+    <div class="sidebar-icon-row">
+      <button class="btn-help" onclick="openHelp()" title="Help & Instructions">?</button>
+      <button class="btn-gear" onclick="openSettings()" title="AI Settings">&#9881;</button>
+    </div>
+    <hr style="border:none; border-top:1px solid rgba(255,255,255,0.1); margin: 12px 0;">
+    <img src="/icons/DirectingStrategy-logo-colour.png" alt="Directing Strategy" style="width:48px; height:48px; object-fit:cover; background:#fff; border-radius:50%; margin-bottom:5px;">
+    <div class="sidebar-credit">Created by<br><a href="https://directingstrategy.com" target="_blank" rel="noopener">directingstrategy.com</a></div>
+  </div>
 </aside>
 
 <!-- ── Main content ────────────────────────────────── -->
@@ -447,13 +510,6 @@
   <div class="settings-box">
     <h3>AI Review Settings</h3>
     <div class="settings-row">
-      <label>Provider</label>
-      <select id="settingsProvider" onchange="onProviderChange()">
-        <option value="openai">OpenAI</option>
-        <option value="anthropic">Anthropic</option>
-      </select>
-    </div>
-    <div class="settings-row">
       <label>Model</label>
       <select id="settingsModel"></select>
     </div>
@@ -469,6 +525,83 @@
   </div>
 </div>
 
+<!-- ── Help overlay ─────────────────────────────── -->
+<div class="help-overlay" id="helpOverlay">
+  <div class="help-box">
+    <button class="modal-close" onclick="closeHelp()" style="position:absolute;top:12px;right:16px">&times;</button>
+    <h3>How to use STAR Lab</h3>
+    <p class="help-subtitle">A free tool to build, manage, and refine your behavioural interview examples.</p>
+
+    <div class="help-section">
+      <h4>What is the STAR Method?</h4>
+      <div class="star-method">
+        <div class="star-card"><strong>Situation</strong><span>Set the scene. What was the context and what was at stake?</span></div>
+        <div class="star-card"><strong>Task</strong><span>What was your specific responsibility — distinct from your team's?</span></div>
+        <div class="star-card"><strong>Action</strong><span>What did <em>you</em> personally do? Be concrete and first-person.</span></div>
+        <div class="star-card"><strong>Result</strong><span>What was the outcome? Quantify where possible.</span></div>
+      </div>
+    </div>
+
+    <hr class="help-divider">
+
+    <div class="help-section">
+      <h4>Getting Started</h4>
+      <ul>
+        <li>Click <strong>+ Add New STAR</strong> in the sidebar to create your first example.</li>
+        <li>Fill in all four sections. Save as <em>In Progress</em> until it's polished.</li>
+        <li>Use the filters to find the right example fast during interview prep.</li>
+      </ul>
+    </div>
+
+    <div class="help-section">
+      <h4>Competencies</h4>
+      <p>The app ships with 12 default competencies tailored to <strong>strategy and consulting roles</strong>. Click <strong>Manage</strong> next to the Competency filter to edit, add, or remove competencies to match any role you're targeting.</p>
+    </div>
+
+    <div class="help-section">
+      <h4>AI Review</h4>
+      <ul>
+        <li>Open a STAR and click <strong>Get AI Feedback</strong> to get a coached review.</li>
+        <li>Requires your own <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">OpenAI API key</a>. Enter it via the ⚙ Settings icon.</li>
+        <li>Your key is stored only in your browser and sent directly to OpenAI — never to any server.</li>
+      </ul>
+    </div>
+
+    <div class="help-section">
+      <h4>Your Data is Private</h4>
+      <p>All your STAR examples are stored locally in your browser using localStorage. Nothing is sent to any server. Use <strong>Export / Import</strong> to back up your data or move it to another device.</p>
+    </div>
+
+    <div class="help-section">
+      <h4>Export &amp; Import</h4>
+      <ul>
+        <li><strong>Export JSON</strong> — full backup, re-importable on any device.</li>
+        <li><strong>Export CSV</strong> — for viewing in a spreadsheet.</li>
+        <li><strong>Import JSON</strong> — replaces all data. Export first as a backup.</li>
+      </ul>
+    </div>
+
+    <div class="help-section">
+      <h4>Install as an App</h4>
+      <ul>
+        <li><strong>Chrome:</strong> click the install icon (⊕) in the address bar → Install.</li>
+        <li><strong>Safari on Mac:</strong> Share → Add to Dock.</li>
+        <li>Once installed, the app opens in its own window and works offline.</li>
+      </ul>
+    </div>
+
+    <div class="help-section">
+      <h4>Get Help</h4>
+      <p>Have a question or found a bug? Raise an issue on <a href="https://github.com/DirectingStrategy/career-stars/issues" target="_blank" rel="noopener">GitHub Issues</a> or leave a comment on the blog post where you found this tool.</p>
+      <p>The full source code is publicly available at <a href="https://github.com/DirectingStrategy/career-stars" target="_blank" rel="noopener">github.com/DirectingStrategy/career-stars</a>.</p>
+    </div>
+
+    <div class="settings-actions">
+      <button class="btn btn-secondary" onclick="closeHelp()">Close</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script>
 // ── State ───────────────────────────────────────────
@@ -479,15 +612,139 @@ let selectedTags = new Set();
 let editMode = false;
 let currentStar = null;
 
+// ── Storage layer ─────────────────────────────────────
+const STORAGE_KEY = "starApp";
+
+const DEFAULT_DATA = {
+  metadata: { created: "2026-03-08", description: "STAR Interview Prep" },
+  competency_taxonomy: [
+    { name: "Strategic Analysis & Insight", description: "Applying frameworks, synthesising data, and generating actionable insights to inform strategic direction" },
+    { name: "Stakeholder Influence", description: "Building alignment across senior leadership, managing competing agendas, and driving buy-in for strategic initiatives without a clear mandate" },
+    { name: "Business Case Development", description: "Structuring compelling investment cases, quantifying value, and supporting executive decision-making" },
+    { name: "Market Intelligence", description: "Monitoring industry trends, assessing competitive dynamics, and translating external signals into strategic implications" },
+    { name: "Cross-functional Alignment", description: "Connecting strategy to execution by aligning cross-functional teams around shared priorities" },
+    { name: "Communication & Storytelling", description: "Distilling complex analysis into clear narratives for board, C-suite, and investor audiences" },
+    { name: "Portfolio & Resource Prioritisation", description: "Evaluating strategic options, managing trade-offs, and allocating resources to highest-value opportunities" },
+    { name: "Commercial Acumen & Value Creation", description: "Understanding P&L drivers, pricing strategy, partnership economics, and paths to sustainable growth" },
+    { name: "Change Management & Transformation", description: "Leading strategic change programs, managing resistance, and embedding new ways of working" },
+    { name: "Problem Solving Under Ambiguity", description: "Structuring ill-defined problems, making decisions with incomplete data, and iterating toward clarity" },
+    { name: "Teamwork & Collaboration", description: "Genuine generosity with colleagues, can give and receive feedback" },
+    { name: "Initiative & Ownership", description: "Proactively identify issues and drive solutions without waiting to be told" },
+  ],
+  examples: [
+    {
+      id: "star_001",
+      title: "SAMPLE — Developing a Market Entry Strategy for a New Geography",
+      primary_competency: "Strategic Analysis & Insight",
+      secondary_competencies: ["Business Case Development", "Communication & Storytelling"],
+      company: "Acme Corp",
+      role: "Strategy Manager",
+      period: "2024-2026",
+      tags: ["market-entry", "strategy", "business-case", "board-level", "growth"],
+      completeness: "complete",
+      recency: "recent",
+      situation: "SAMPLE:\n- Acme Corp's core domestic market was maturing, with revenue growth slowing to 2% year-on-year.\n- The CEO tasked the strategy team with identifying the next growth engine. Three options were on the table:\n  1. geographic expansion into Southeast Asia,\n  2. adjacency moves into a new product vertical, and\n  3. an acquisition-led approach\n- but there was no structured analysis to support a decision, and the leadership team held strongly divergent views.",
+      task: "SAMPLE: As Strategy Manager, I was responsible for leading the evaluation of all three growth options, developing a recommendation supported by a robust business case, and presenting it to the Executive Committee and Board for approval within a 10-week window.",
+      action: "SAMPLE:\n1. Designed a structured evaluation framework scoring each option across market attractiveness, right to win, investment required, time to value, and strategic risk.\n2. Conducted rapid market sizing for three Southeast Asian markets using public data, analyst reports, and interviews with local distributors and industry contacts.\n3. Built a financial model for the recommended market (Indonesia) with three scenarios — conservative, base, and upside — including a 5-year P&L, required investment, and payback period.\n4. Stress-tested assumptions with the CFO and regional GMs to build credibility and pre-align key stakeholders before the formal board presentation.\n5. Crafted a 15-page board paper and a supporting executive summary that framed the recommendation within the company's long-term strategic ambition.",
+      result: "SAMPLE: The Board approved the Indonesia market entry with an initial investment of $4M. The structured evaluation framework was adopted as the standard approach for future strategic decisions. Within 12 months of entry, the Indonesia operation reached break-even 6 months ahead of the base-case projection.",
+      key_metrics: [
+        "SAMPLE — Board approval secured for $4M investment",
+        "SAMPLE — Evaluation framework adopted as company standard",
+        "SAMPLE — Indonesia operation reached break-even 6 months ahead of plan",
+      ],
+      review_notes: "**Overall** Strong — The example provides clear context, distinct personal responsibility, concrete first-person actions, quantified results, and persuasively demonstrates Strategic Analysis & Insight within a concise, interview-ready format.\n\n**Top 3 improvement opportunities**\n\n1. Make actions more explicitly first-person (e.g., \"I personally conducted XYZ interviews\" or \"I led workshops with…\" instead of \"Conducted rapid market sizing…\"), to reinforce personal ownership.\n\n2. Briefly clarify the initial challenge of divergent leadership views and how your analysis resolved these (e.g., \"I facilitated consensus by…\"), to strengthen the story's insight and influence elements.\n\n3. Add a sentence on how you addressed risk or uncertainty in your recommendation (e.g., \"I identified key risks and proposed mitigation strategies…\"), to deepen evidence of strategic foresight.",
+      source: "manual entry",
+    },
+    {
+      id: "star_002",
+      title: "SAMPLE — Leading a Portfolio Prioritisation Under Budget Constraints",
+      primary_competency: "Portfolio & Resource Prioritisation",
+      secondary_competencies: ["Stakeholder Influence"],
+      company: "Globex Industries",
+      role: "Senior Strategy Analyst",
+      period: "2023",
+      tags: ["portfolio-strategy", "prioritisation", "cost-optimisation", "stakeholder-management", "exec-level"],
+      completeness: "in_progress",
+      recency: "recent",
+      situation: "SAMPLE\n- Globex Industries faced a 20% reduction in its discretionary investment budget following a difficult Q2. The company had 14 active strategic initiatives (across digital transformation, geographic expansion, and operational efficiency) but could now only fund approximately 8.\n- Each initiative had an executive sponsor who considered their project essential, creating significant political tension and no clear basis for comparison.",
+      task: "SAMPLE\n- I was asked to design and facilitate a portfolio prioritisation process that would produce a defensible, data-driven ranking of all 14 initiatives and a recommended funding plan for the Executive Committee to approve within 4 weeks.",
+      action: "SAMPLE\n1. Developed a weighted scoring model with criteria agreed by the CFO and COO: strategic alignment, revenue impact (NPV over 3 years), feasibility and execution risk, and dependency on other initiatives.\n2. Ran structured intake sessions with each initiative owner to collect consistent data using a standardised template.\n3. Facilitated a calibration workshop with the senior leadership team where initiatives were plotted on an impact vs. feasibility matrix, making trade-offs visible and transparent.\n4. Proposed three portfolio scenarios (aggressive, balanced, conservative) with clear trade-offs articulated for each.",
+      result: "SAMPLE\n- The Executive Committee adopted the balanced scenario, funding 9 of 14 initiatives and deferring 5 with clear re-entry criteria.\n- The process reduced cross-functional tension by giving every sponsor a fair hearing and a transparent rationale for decisions.",
+      key_metrics: [
+        "SAMPLE — 9 of 14 initiatives funded through structured prioritisation",
+        "SAMPLE — Process completed within the 4-week deadline",
+      ],
+      review_notes: "**Overall** Strong — Clear context, distinct personal ownership, concrete actions, and quantified results; demonstrates robust portfolio/resource prioritisation.\n\n**Top 3 improvement opportunities**\n\n1. Make your ownership explicit in actions (e.g., \"I designed the scoring model and personally facilitated the calibration workshop\" instead of passive language).\n\n2. Quantify the impact on business outcomes, not just process (e.g., \"The funded initiatives delivered $X incremental revenue or Y% cost savings over 12 months\").\n\n3. Highlight a specific stakeholder management challenge and your approach (e.g., \"I persuaded two executive sponsors to align behind the agreed criteria after initial resistance by...\").",
+      source: "manual entry",
+    },
+  ],
+};
+
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) { saveData(DEFAULT_DATA); return JSON.parse(JSON.stringify(DEFAULT_DATA)); }
+    return JSON.parse(raw);
+  } catch (e) {
+    console.error("Storage read failed", e);
+    return JSON.parse(JSON.stringify(DEFAULT_DATA));
+  }
+}
+
+function saveData(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function generateId() {
+  return `star_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
+}
+
+function deriveMeta() {
+  const data = loadData();
+  const examples = data.examples || [];
+  const companies = [...new Set(examples.map(e => e.company).filter(Boolean))].sort();
+  const allTags = new Set();
+  examples.forEach(e => (e.tags || []).forEach(t => allTags.add(t)));
+  return {
+    competencies: (data.competency_taxonomy || []).map(t => t.name),
+    companies,
+    tags: [...allTags].sort(),
+    completeness_options: ["complete", "in_progress"],
+  };
+}
+
+const AI_REVIEW_PROMPT = `You are a job interview coach. Review this behavioural STAR summary for the competency "{primary_competency}".
+
+Areas to consider when rating the review and identifying improvement opportunities are:
+- Situation - Is context specific with clear stakes, or vague?
+- Task - Is the candidate's responsibility distinct from the team's?
+- Action - Are steps concrete and first-person ("I did X")? Flag "helped with" or "was involved in".
+- Result - Are outcomes quantified with metrics and a clear before/after?
+- Competency fit - Does it convincingly demonstrate {primary_competency}?
+- Interview readiness - Could this be delivered in 2-3 minutes?
+
+
+Provide a response in markdown with an overall rating and UP TO 3 improvement opportunities. You do not need to provide all 3 improvement opportunities if the STAR is strong and there aren't 3 material improvements.  Use the below format and nothing else:
+
+**Overall** Strong / Needs Work / Weak — one sentence why.
+
+**Improvement opportunities**
+1. [highest-impact fix with a reframing idea or example addition]
+2. [second fix with a reframing idea or example addition]
+3. [third fix with a reframing idea or example addition]
+
+Keep your entire response under 200 words. Be specific with your suggestions but make examples (versus facts) clear with "e.g.". Use markdown.`;
+
 function completenessLabel(v) { return v === 'complete' ? 'Complete' : v === 'in_progress' ? 'In Progress' : v; }
 function recencyLabel(v) { return v === 'recent' ? 'Recent' : v === 'old' ? 'Not Recent' : v; }
 
 // ── Init ────────────────────────────────────────────
 async function init() {
-  meta = await (await fetch("/api/meta")).json();
+  meta = deriveMeta();
   populateDropdowns();
-  await loadStars();
+  loadStars();
   setupListeners();
+  if (!localStorage.getItem("starApp_helpSeen")) openHelp();
 }
 
 function populateDropdowns() {
@@ -537,33 +794,45 @@ function setupListeners() {
   document.getElementById("modalOverlay").addEventListener("click", e => {
     if (e.target === document.getElementById("modalOverlay")) closeModal();
   });
-  document.addEventListener("keydown", e => { if (e.key === "Escape") { closeSettings(); closeModal(); closeConfirm(); } });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") { closeSettings(); closeModal(); closeConfirm(); closeHelp(); } });
   document.getElementById("settingsOverlay").addEventListener("click", e => {
     if (e.target === document.getElementById("settingsOverlay")) closeSettings();
+  });
+  document.getElementById("helpOverlay").addEventListener("click", e => {
+    if (e.target === document.getElementById("helpOverlay")) closeHelp();
   });
 }
 
 // ── Load & render ───────────────────────────────────
-async function loadStars() {
-  const params = new URLSearchParams();
-  const comp = document.getElementById("filterCompetency").value;
-  const co = document.getElementById("filterCompany").value;
+function loadStars() {
+  const data = loadData();
+  const stored = data.examples || [];
+  const comp    = document.getElementById("filterCompetency").value;
+  const co      = document.getElementById("filterCompany").value;
   const recency = document.getElementById("filterRecency").value;
-  const q = document.getElementById("searchInput").value.trim();
-  if (comp) params.set("competency", comp);
-  if (co) params.set("company", co);
-  if (recency) params.set("recency", recency);
-  if (q) params.set("q", q);
-  if (selectedTags.size) params.set("tags", Array.from(selectedTags).join(","));
+  const q       = document.getElementById("searchInput").value.trim().toLowerCase();
+  const reqTags = Array.from(selectedTags).map(t => t.toLowerCase());
 
-  const res = await (await fetch("/api/stars?" + params.toString())).json();
-  allExamples = res.examples;
+  let filtered = stored.filter(e => {
+    if (comp && comp !== e.primary_competency && !(e.secondary_competencies || []).includes(comp)) return false;
+    if (co && e.company !== co) return false;
+    if (recency && e.recency !== recency) return false;
+    if (reqTags.length) {
+      const etags = (e.tags || []).map(t => t.toLowerCase());
+      if (!reqTags.every(rt => etags.includes(rt))) return false;
+    }
+    if (q) {
+      const haystack = [e.title, e.situation, e.task, e.action, e.result, e.company, e.role, ...(e.tags || [])].join(" ").toLowerCase();
+      if (!haystack.includes(q)) return false;
+    }
+    return true;
+  });
 
-  const filtered = allExamples.filter(e => activeCompletenessFilters.has(e.completeness));
-  sortExamples(filtered);
-
-  renderStats(res.total, filtered.length, filtered);
-  renderCards(filtered);
+  allExamples = filtered;
+  const byCompleteness = filtered.filter(e => activeCompletenessFilters.has(e.completeness));
+  sortExamples(byCompleteness);
+  renderStats(stored.length, byCompleteness.length, byCompleteness);
+  renderCards(byCompleteness);
   updateClearButton();
 }
 
@@ -693,6 +962,7 @@ function renderModal() {
       <div class="modal-actions">
         <button class="btn btn-primary" onclick="enterEdit()">Edit</button>
         <button class="btn btn-ai" id="btnAiFeedback" onclick="getAIFeedback('${e.id}')">Get AI Feedback</button>
+        <button class="btn btn-secondary" onclick="window.print()">Print</button>
         <button class="btn btn-secondary" onclick="closeModal()">Close</button>
         <span class="spacer"></span>
         <button class="btn btn-danger" onclick="confirmDeleteStar('${e.id}', '${escAttr(e.title)}')">Delete</button>
@@ -815,21 +1085,21 @@ async function saveEdit() {
     review_notes: document.getElementById("ed_review_notes").value,
   };
 
-  const res = await fetch(`/api/stars/${id}`, {
-    method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),
-  });
-  const data = await res.json();
-
-  if (data.status === "saved") {
-    Object.assign(currentStar, data.example);
-    editMode = false;
-    renderModal();
-    loadStars();
-    refreshMeta();
-    showToast("Saved!");
-  } else {
-    showToast("Error: " + (data.error || "Save failed"));
+  if (body.completeness === "complete" && body.title.startsWith("DRAFT — ")) {
+    body.title = body.title.replace("DRAFT — ", "");
   }
+
+  const data = loadData();
+  const idx = data.examples.findIndex(e => e.id === id);
+  if (idx === -1) { showToast("STAR not found"); return; }
+  Object.assign(data.examples[idx], body);
+  saveData(data);
+  Object.assign(currentStar, body);
+  editMode = false;
+  renderModal();
+  loadStars();
+  refreshMeta();
+  showToast("Saved!");
 }
 
 // ── Delete STAR ─────────────────────────────────────
@@ -837,30 +1107,32 @@ function confirmDeleteStar(id, title) {
   showConfirm(
     "Delete STAR Example",
     `Are you sure you want to delete "${title}"? This cannot be undone.`,
-    async () => {
-      const res = await fetch(`/api/stars/${id}`, { method: "DELETE" });
-      const data = await res.json();
-      if (data.status === "deleted") {
-        closeModal();
-        await loadStars();
-        refreshMeta();
-        showToast("Deleted");
-      } else {
-        showToast("Error: " + (data.error || "Delete failed"));
-      }
-    }
+    () => {
+      const data = loadData();
+      const idx = data.examples.findIndex(e => e.id === id);
+      if (idx === -1) { showToast("Not found"); return; }
+      data.examples.splice(idx, 1);
+      saveData(data);
+      closeModal();
+      loadStars();
+      refreshMeta();
+      showToast("Deleted");
+    },
+    "Delete"
   );
 }
 
 // ── Confirm dialog ──────────────────────────────────
 let confirmCallback = null;
-function showConfirm(title, message, onConfirm) {
+function showConfirm(title, message, onConfirm, confirmLabel) {
   confirmCallback = onConfirm;
+  const label = confirmLabel || "Confirm";
+  const style = label === "Delete" ? "background:var(--red);color:#fff;border:none;" : "background:var(--pink-strong);color:#fff;border:none;";
   document.getElementById("confirmBox").innerHTML = `
     <h3>${esc(title)}</h3>
     <p>${esc(message)}</p>
     <div class="confirm-actions">
-      <button class="btn btn-danger" onclick="executeConfirm()" style="background:var(--red);color:#fff;border:none;">Delete</button>
+      <button class="btn btn-danger" onclick="executeConfirm()" style="${style}">${esc(label)}</button>
       <button class="btn btn-secondary" onclick="closeConfirm()">Cancel</button>
     </div>
   `;
@@ -986,28 +1258,22 @@ async function saveNew() {
     review_notes: document.getElementById("new_review_notes").value,
   };
 
-  const res = await fetch("/api/stars", {
-    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),
-  });
-  const data = await res.json();
-
-  if (data.status === "created") {
-    closeModal();
-    await loadStars();
-    refreshMeta();
-    showToast("Created " + data.example.id);
-  } else {
-    showToast("Error: " + (data.error || "Create failed"));
-  }
+  const newStar = { id: generateId(), source: "manual entry", ...body };
+  const data = loadData();
+  data.examples.push(newStar);
+  saveData(data);
+  closeModal();
+  loadStars();
+  refreshMeta();
+  showToast("Created " + newStar.id);
 }
 
 // ── Competency Manager ──────────────────────────────
 async function openCompetencyManager() {
   currentStar = null; editMode = false;
   const m = document.getElementById("modal");
-  const res = await fetch("/api/competencies");
-  const data = await res.json();
-  const comps = data.competencies || [];
+  const appData = loadData();
+  const comps = appData.competency_taxonomy || [];
 
   m.innerHTML = `
     <button class="modal-close" onclick="closeModal()">&times;</button>
@@ -1043,18 +1309,16 @@ async function addCompetency() {
   const desc = document.getElementById("newCompDesc").value.trim();
   if (!name) { showToast("Name is required"); return; }
 
-  const res = await fetch("/api/competencies", {
-    method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, description: desc }),
-  });
-  const data = await res.json();
-  if (data.status === "created") {
-    refreshMeta();
-    openCompetencyManager();
-    showToast("Added");
-  } else {
-    showToast("Error: " + (data.error || "Failed"));
+  const appData = loadData();
+  if (appData.competency_taxonomy.some(c => c.name === name)) {
+    showToast(`"${name}" already exists`);
+    return;
   }
+  appData.competency_taxonomy.push({ name, description: desc });
+  saveData(appData);
+  refreshMeta();
+  openCompetencyManager();
+  showToast("Added");
 }
 
 function editCompetency(idx, name, desc) {
@@ -1076,36 +1340,43 @@ async function saveCompetency(idx) {
   const desc = document.getElementById(`editCompDesc-${idx}`).value.trim();
   if (!name) { showToast("Name is required"); return; }
 
-  const res = await fetch(`/api/competencies/${idx}`, {
-    method: "PUT", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, description: desc }),
-  });
-  const data = await res.json();
-  if (data.status === "saved") {
-    refreshMeta();
-    openCompetencyManager();
-    showToast("Updated");
-  } else {
-    showToast("Error: " + (data.error || "Failed"));
+  const appData = loadData();
+  const taxonomy = appData.competency_taxonomy;
+  const oldName = taxonomy[idx].name;
+  if (name !== oldName && taxonomy.some(c => c.name === name)) {
+    showToast(`"${name}" already exists`);
+    return;
   }
+  taxonomy[idx] = { name, description: desc };
+  if (name !== oldName) {
+    appData.examples.forEach(e => {
+      if (e.primary_competency === oldName) e.primary_competency = name;
+      e.secondary_competencies = (e.secondary_competencies || []).map(s => s === oldName ? name : s);
+    });
+  }
+  saveData(appData);
+  refreshMeta();
+  openCompetencyManager();
+  showToast("Updated");
 }
 
 async function deleteCompetency(idx, name) {
-  showConfirm("Delete Competency", `Delete "${name}"? This only works if no examples use it.`, async () => {
-    const res = await fetch(`/api/competencies/${idx}`, { method: "DELETE" });
-    const data = await res.json();
-    if (data.status === "deleted") {
-      refreshMeta();
-      openCompetencyManager();
-      showToast("Deleted");
-    } else {
-      showToast("Error: " + (data.error || "Failed"));
+  showConfirm("Delete Competency", `Delete "${name}"? This only works if no examples use it.`, () => {
+    const appData = loadData();
+    for (const e of appData.examples) {
+      if (e.primary_competency === name) { showToast(`Cannot delete: used in "${e.title || e.id}"`); return; }
+      if ((e.secondary_competencies || []).includes(name)) { showToast(`Cannot delete: used in "${e.title || e.id}"`); return; }
     }
-  });
+    appData.competency_taxonomy.splice(idx, 1);
+    saveData(appData);
+    refreshMeta();
+    openCompetencyManager();
+    showToast("Deleted");
+  }, "Delete");
 }
 
-async function refreshMeta() {
-  meta = await (await fetch("/api/meta")).json();
+function refreshMeta() {
+  meta = deriveMeta();
   repopulateCompanyDropdown();
   repopulateCompetencyDropdown();
   renderTagOptions();
@@ -1325,32 +1596,36 @@ function showToast(msg) {
 }
 
 // ── AI Settings ─────────────────────────────────────
-const AI_MODELS = {
-  openai: [
-    { value: "gpt-4o-mini", label: "GPT-4o Mini" },
-    { value: "gpt-4o", label: "GPT-4o" },
-    { value: "gpt-4.1-mini", label: "GPT-4.1 Mini" },
-    { value: "gpt-4.1", label: "GPT-4.1" },
-  ],
-  anthropic: [
-    { value: "claude-sonnet-4-20250514", label: "Claude Sonnet 4" },
-    { value: "claude-haiku-4-20250414", label: "Claude Haiku 4" },
-    { value: "claude-opus-4-20250514", label: "Claude Opus 4" },
-  ],
-};
+const AI_MODELS = [
+  { value: "gpt-4.1", label: "GPT-4.1" },
+  { value: "gpt-5", label: "GPT-5" },
+  { value: "gpt-5.4", label: "GPT-5.4" },
+];
 
 function loadSettings() {
   return {
-    provider: localStorage.getItem("ai_provider") || "openai",
     model: localStorage.getItem("ai_model") || "",
     apiKey: localStorage.getItem("ai_api_key") || "",
   };
 }
 
+function populateModelSelect() {
+  const modelSelect = document.getElementById("settingsModel");
+  modelSelect.innerHTML = AI_MODELS.map(m => `<option value="${m.value}">${m.label}</option>`).join("");
+}
+
+function openHelp() {
+  document.getElementById("helpOverlay").classList.add("open");
+}
+
+function closeHelp() {
+  document.getElementById("helpOverlay").classList.remove("open");
+  localStorage.setItem("starApp_helpSeen", "1");
+}
+
 function openSettings() {
   const s = loadSettings();
-  document.getElementById("settingsProvider").value = s.provider;
-  onProviderChange();
+  populateModelSelect();
   if (s.model) document.getElementById("settingsModel").value = s.model;
   document.getElementById("settingsApiKey").value = s.apiKey;
   document.getElementById("settingsOverlay").classList.add("open");
@@ -1360,18 +1635,9 @@ function closeSettings() {
   document.getElementById("settingsOverlay").classList.remove("open");
 }
 
-function onProviderChange() {
-  const provider = document.getElementById("settingsProvider").value;
-  const modelSelect = document.getElementById("settingsModel");
-  const models = AI_MODELS[provider] || [];
-  modelSelect.innerHTML = models.map(m => `<option value="${m.value}">${m.label}</option>`).join("");
-}
-
 function saveSettings() {
-  const provider = document.getElementById("settingsProvider").value;
   const model = document.getElementById("settingsModel").value;
   const apiKey = document.getElementById("settingsApiKey").value.trim();
-  localStorage.setItem("ai_provider", provider);
   localStorage.setItem("ai_model", model);
   localStorage.setItem("ai_api_key", apiKey);
   closeSettings();
@@ -1392,19 +1658,52 @@ async function getAIFeedback(starId) {
   btn.innerHTML = '<span class="ai-loading"></span> Reviewing...';
 
   try {
-    const res = await fetch(`/api/ai-review/${starId}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ api_key: s.apiKey, provider: s.provider, model: s.model }),
-    });
-    const data = await res.json();
+    const appData = loadData();
+    const target = appData.examples.find(e => e.id === starId);
+    if (!target) { showToast("STAR not found"); return; }
 
-    if (data.error) {
-      showToast("Error: " + data.error);
-      return;
+    const starContent = [
+      `Title: ${target.title || ""}`,
+      `Primary Competency: ${target.primary_competency || ""}`,
+      `Secondary Competencies: ${(target.secondary_competencies || []).join(", ")}`,
+      `Company: ${target.company || ""}`,
+      `Role: ${target.role || ""}`,
+      `\nSITUATION:\n${target.situation || "(empty)"}`,
+      `\nTASK:\n${target.task || "(empty)"}`,
+      `\nACTION:\n${target.action || "(empty)"}`,
+      `\nRESULT:\n${target.result || "(empty)"}`,
+      `\nKEY METRICS:\n${(target.key_metrics || []).join("\n") || "(none)"}`,
+    ].join("\n");
+
+    const systemPrompt = AI_REVIEW_PROMPT.replace(/{primary_competency}/g, target.primary_competency || "Unknown");
+    const model = s.model || "gpt-4o-mini";
+
+    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: { "Authorization": `Bearer ${s.apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model,
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: starContent },
+        ],
+        ...(model.startsWith("gpt-5") ? { max_completion_tokens: 2000 } : { max_tokens: 2000 }),
+      }),
+    });
+
+    if (!res.ok) {
+      const errBody = await res.json().catch(() => ({}));
+      throw new Error(errBody?.error?.message || `HTTP ${res.status}`);
     }
 
-    currentStar.review_notes = data.review_notes;
+    const json = await res.json();
+    const reviewText = json.choices[0].message.content;
+
+    const freshData = loadData();
+    const ex = freshData.examples.find(e => e.id === starId);
+    if (ex) { ex.review_notes = reviewText; saveData(freshData); }
+
+    currentStar.review_notes = reviewText;
     renderModal();
     loadStars();
     showToast("AI review complete");
@@ -1416,8 +1715,117 @@ async function getAIFeedback(starId) {
   }
 }
 
+// ── Export / Import / Print ──────────────────────────
+function openDataManager() {
+  currentStar = null; editMode = false;
+  const data = loadData();
+  const count = (data.examples || []).length;
+  const m = document.getElementById("modal");
+  m.innerHTML = `
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <h2 style="font-size:18px; margin-bottom:6px; color:var(--dark);">Export / Import</h2>
+    <p style="font-size:13px; color:var(--grey); margin-bottom:20px;">You have <strong>${count}</strong> STAR example${count !== 1 ? "s" : ""} stored in this browser.</p>
+
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      <div style="border:1px solid var(--border); border-radius:10px; padding:16px;">
+        <div style="font-weight:600; font-size:14px; color:var(--dark); margin-bottom:4px;">Export JSON</div>
+        <div style="font-size:13px; color:var(--grey); margin-bottom:12px;">Download all your data as a JSON file. Use this to back up your STARs or move them to another device.</div>
+        <button class="btn btn-primary" onclick="exportJSON(); closeModal()">Download JSON</button>
+      </div>
+
+      <div style="border:1px solid var(--border); border-radius:10px; padding:16px;">
+        <div style="font-weight:600; font-size:14px; color:var(--dark); margin-bottom:4px;">Export CSV</div>
+        <div style="font-size:13px; color:var(--grey); margin-bottom:12px;">Download all examples as a spreadsheet (CSV). Useful for sharing or reviewing outside the app.</div>
+        <button class="btn btn-primary" onclick="exportCSV(); closeModal()">Download CSV</button>
+      </div>
+
+      <div style="border:1px solid var(--border); border-radius:10px; padding:16px;">
+        <div style="font-weight:600; font-size:14px; color:var(--dark); margin-bottom:4px;">Import JSON</div>
+        <div style="font-size:13px; color:var(--grey); margin-bottom:12px;">Load a previously exported JSON file. <strong style="color:var(--red)">This will replace all current data.</strong></div>
+        <button class="btn btn-secondary" style="border-color:var(--red);color:var(--red)" onclick="closeModal(); importJSON()">Choose File…</button>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+    </div>
+  `;
+  document.getElementById("modalOverlay").classList.add("open");
+}
+
+function exportJSON() {
+  const data = loadData();
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `star-prep-export-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importJSON() {
+  document.getElementById("importFileInput").click();
+}
+
+function handleImportFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const parsed = JSON.parse(e.target.result);
+      if (!parsed.examples || !parsed.competency_taxonomy) {
+        showToast("Invalid file: missing examples or competency_taxonomy");
+        return;
+      }
+      showConfirm(
+        "Import Data",
+        `Replace all current data with ${parsed.examples.length} examples and ${parsed.competency_taxonomy.length} competencies?`,
+        () => {
+          saveData(parsed);
+          meta = deriveMeta();
+          loadStars();
+          refreshMeta();
+          showToast(`Imported ${parsed.examples.length} examples`);
+        },
+        "Import"
+      );
+    } catch {
+      showToast("Could not parse file — check it is valid JSON");
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = "";
+}
+
+function exportCSV() {
+  const data = loadData();
+  const cols = ["id","title","primary_competency","secondary_competencies","company","role","period","completeness","recency","tags","situation","task","action","result","key_metrics"];
+  const escape = v => {
+    const s = Array.isArray(v) ? v.join("; ") : String(v ?? "");
+    return (s.includes(",") || s.includes("\n") || s.includes('"')) ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+  const rows = [cols.join(",")];
+  data.examples.forEach(e => rows.push(cols.map(c => escape(e[c])).join(",")));
+  const blob = new Blob([rows.join("\n")], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `star-prep-export-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ── Service Worker ────────────────────────────────────
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js").catch(err => console.warn("SW registration failed:", err));
+  });
+}
+
 // ── Go ──────────────────────────────────────────────
-onProviderChange();
+populateModelSelect();
 init();
 </script>
 </body>

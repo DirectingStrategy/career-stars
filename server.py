@@ -41,11 +41,11 @@ Areas to consider when rating the review and identifying improvement opportuniti
 - Interview readiness - Could this be delivered in 2-3 minutes?
 
 
-Provide a response in markdown in the below format and nothing else:
+Provide a response in markdown with an overall rating and UP TO 3 improvement opportunities. You do not need to provide all 3 improvement opportunities if the STAR is strong and there aren't 3 material improvements.  Use the below format and nothing else:
 
 **Overall** Strong / Needs Work / Weak — one sentence why.
 
-**Top 3 improvement opportunities**
+**Improvement opportunities**
 1. [highest-impact fix with a reframing idea or example addition]
 2. [second fix with a reframing idea or example addition]
 3. [third fix with a reframing idea or example addition]
@@ -74,6 +74,10 @@ def save_yaml(data, backup=True):
 @app.route("/")
 def index():
     return send_from_directory("static", "index.html")
+
+@app.route("/<path:path>")
+def static_files(path):
+    return send_from_directory("static", path)
 
 
 # ── API: metadata (competencies, companies, tags) ──────────────────────────
