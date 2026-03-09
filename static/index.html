@@ -237,6 +237,17 @@
   }
   .toast.show { opacity: 1; }
 
+  .backup-banner {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 180;
+    display: none; align-items: center; justify-content: center; gap: 12px;
+    padding: 10px 20px; background: #fef3cd; border-bottom: 2px solid #f0c040;
+    color: #664d03; font-size: 14px; font-weight: 500;
+  }
+  .backup-banner.show { display: flex; }
+  .backup-banner button { font-size: 13px; cursor: pointer; }
+  .backup-banner .bb-export { background: var(--accent); color: #fff; border: none; border-radius: 6px; padding: 5px 14px; font-weight: 600; }
+  .backup-banner .bb-dismiss { background: none; border: none; font-size: 18px; color: #664d03; padding: 0 4px; }
+
   .empty-state { text-align: center; padding: 60px 20px; color: var(--grey); }
   .empty-state h3 { font-size: 18px; margin-bottom: 8px; color: var(--dark); }
 
@@ -505,6 +516,13 @@
 <!-- ── Toast ────────────────────────────────────────── -->
 <div class="toast" id="toast">Saved!</div>
 
+<!-- ── Backup banner ───────────────────────────────── -->
+<div class="backup-banner" id="backupBanner">
+  <span>It's been a while since your last backup. Export your data to keep it safe.</span>
+  <button class="bb-export" onclick="openExportModal()">Export Now</button>
+  <button class="bb-dismiss" onclick="dismissBackupBanner()" title="Dismiss">&times;</button>
+</div>
+
 <!-- ── Settings overlay ──────────────────────────── -->
 <div class="settings-overlay" id="settingsOverlay">
   <div class="settings-box">
@@ -531,6 +549,29 @@
     <button class="modal-close" onclick="closeHelp()" style="position:absolute;top:12px;right:16px">&times;</button>
     <h3>How to use STAR Lab</h3>
     <p class="help-subtitle">A free tool to build, manage, and refine your behavioural interview examples.</p>
+
+    <div class="help-section" style="background:#fef3cd;border:1px solid #f0c040;border-radius:8px;padding:14px 16px;margin-bottom:16px">
+      <h4 style="color:#664d03">⚠ Your Data — Back It Up</h4>
+      <ul style="color:#664d03">
+        <li>All your STAR examples are stored <strong>locally in your browser</strong>. Nothing is sent to any server.</li>
+        <li>If you clear your browser data, <strong>your STARs will be permanently lost</strong> — even if the app is installed.</li>
+        <li>Use <strong>Export JSON</strong> regularly to back up your data. The app will remind you every 2 days.</li>
+        <li>To move data between devices, export on one and import on the other.</li>
+      </ul>
+    </div>
+
+    <div class="help-section">
+      <h4>Install as an App</h4>
+      <ul>
+        <li>Installing STAR Lab gives your data the best chance of surviving browser updates and storage cleanup.</li>
+        <li><strong>Chrome:</strong> click the install icon (⊕) in the address bar → Install.</li>
+        <li><strong>Safari on Mac:</strong> Share → Add to Dock.</li>
+        <li>Once installed, the app opens in its own window and works offline.</li>
+        <li>Even after installing, always keep a recent backup — clearing app/browser data will still erase your STARs.</li>
+      </ul>
+    </div>
+
+    <hr class="help-divider">
 
     <div class="help-section">
       <h4>What is the STAR Method?</h4>
@@ -568,25 +609,11 @@
     </div>
 
     <div class="help-section">
-      <h4>Your Data is Private</h4>
-      <p>All your STAR examples are stored locally in your browser using localStorage. Nothing is sent to any server. Use <strong>Export / Import</strong> to back up your data or move it to another device.</p>
-    </div>
-
-    <div class="help-section">
       <h4>Export &amp; Import</h4>
       <ul>
         <li><strong>Export JSON</strong> — full backup, re-importable on any device.</li>
         <li><strong>Export CSV</strong> — for viewing in a spreadsheet.</li>
         <li><strong>Import JSON</strong> — replaces all data. Export first as a backup.</li>
-      </ul>
-    </div>
-
-    <div class="help-section">
-      <h4>Install as an App</h4>
-      <ul>
-        <li><strong>Chrome:</strong> click the install icon (⊕) in the address bar → Install.</li>
-        <li><strong>Safari on Mac:</strong> Share → Add to Dock.</li>
-        <li>Once installed, the app opens in its own window and works offline.</li>
       </ul>
     </div>
 
@@ -652,7 +679,7 @@ const DEFAULT_DATA = {
         "SAMPLE — Evaluation framework adopted as company standard",
         "SAMPLE — Indonesia operation reached break-even 6 months ahead of plan",
       ],
-      review_notes: "**Overall** Strong — The example provides clear context, distinct personal responsibility, concrete first-person actions, quantified results, and persuasively demonstrates Strategic Analysis & Insight within a concise, interview-ready format.\n\n**Top 3 improvement opportunities**\n\n1. Make actions more explicitly first-person (e.g., \"I personally conducted XYZ interviews\" or \"I led workshops with…\" instead of \"Conducted rapid market sizing…\"), to reinforce personal ownership.\n\n2. Briefly clarify the initial challenge of divergent leadership views and how your analysis resolved these (e.g., \"I facilitated consensus by…\"), to strengthen the story's insight and influence elements.\n\n3. Add a sentence on how you addressed risk or uncertainty in your recommendation (e.g., \"I identified key risks and proposed mitigation strategies…\"), to deepen evidence of strategic foresight.",
+      review_notes: "",
       source: "manual entry",
     },
     {
@@ -674,7 +701,7 @@ const DEFAULT_DATA = {
         "SAMPLE — 9 of 14 initiatives funded through structured prioritisation",
         "SAMPLE — Process completed within the 4-week deadline",
       ],
-      review_notes: "**Overall** Strong — Clear context, distinct personal ownership, concrete actions, and quantified results; demonstrates robust portfolio/resource prioritisation.\n\n**Top 3 improvement opportunities**\n\n1. Make your ownership explicit in actions (e.g., \"I designed the scoring model and personally facilitated the calibration workshop\" instead of passive language).\n\n2. Quantify the impact on business outcomes, not just process (e.g., \"The funded initiatives delivered $X incremental revenue or Y% cost savings over 12 months\").\n\n3. Highlight a specific stakeholder management challenge and your approach (e.g., \"I persuaded two executive sponsors to align behind the agreed criteria after initial resistance by...\").",
+      review_notes: "",
       source: "manual entry",
     },
   ],
@@ -745,6 +772,7 @@ async function init() {
   loadStars();
   setupListeners();
   if (!localStorage.getItem("starApp_helpSeen")) openHelp();
+  checkBackupReminder();
 }
 
 function populateDropdowns() {
@@ -1596,6 +1624,22 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove("show"), 2000);
 }
 
+// ── Backup Reminder ─────────────────────────────────
+function checkBackupReminder() {
+  const last = localStorage.getItem("starApp_lastExport");
+  const twoDays = 2 * 24 * 60 * 60 * 1000;
+  if (!last || (Date.now() - Number(last)) > twoDays) {
+    document.getElementById("backupBanner").classList.add("show");
+  }
+}
+function dismissBackupBanner() {
+  document.getElementById("backupBanner").classList.remove("show");
+}
+function recordExport() {
+  localStorage.setItem("starApp_lastExport", String(Date.now()));
+  dismissBackupBanner();
+}
+
 // ── AI Settings ─────────────────────────────────────
 const AI_MODELS = [
   { value: "gpt-4.1", label: "GPT-4.1" },
@@ -1763,6 +1807,7 @@ function exportJSON() {
   a.download = `star-prep-export-${new Date().toISOString().slice(0,10)}.json`;
   a.click();
   URL.revokeObjectURL(url);
+  recordExport();
 }
 
 function importJSON() {
@@ -1789,6 +1834,7 @@ function handleImportFile(event) {
           loadStars();
           refreshMeta();
           showToast(`Imported ${parsed.examples.length} examples`);
+          recordExport();
         },
         "Import"
       );
@@ -1816,6 +1862,7 @@ function exportCSV() {
   a.download = `star-prep-export-${new Date().toISOString().slice(0,10)}.csv`;
   a.click();
   URL.revokeObjectURL(url);
+  recordExport();
 }
 
 // ── Service Worker ────────────────────────────────────
