@@ -1,7 +1,7 @@
 {
-  "name": "STAR Interview Prep",
-  "short_name": "STAR Prep",
-  "description": "Manage your STAR interview examples offline",
+  "name": "STAR Lab",
+  "short_name": "STAR Lab",
+  "description": "Build, manage, and refine your behavioural interview examples",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#232d4c",

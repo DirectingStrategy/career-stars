@@ -6,7 +6,7 @@
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#232d4c">
 <link rel="apple-touch-icon" href="/icons/icon-192.png">
-<title>STAR Interview Prep</title>
+<title>STAR Lab</title>
 <style>
   :root {
     --dark: #232d4c; --grey: #7F8691; --pink-light: #FFE3E1; --pink-strong: #FE5F55;
@@ -61,6 +61,15 @@
     cursor: pointer;
   }
   .manage-link:hover { color: #fff; }
+  .sidebar-footer {
+    margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1);
+    text-align: center;
+  }
+  .sidebar-footer img { display: block; margin: 0 auto 8px; }
+  .sidebar-credit { font-size: 11px; color: var(--grey); text-align: center; }
+  .sidebar-credit a { color: var(--grey); text-decoration: none; }
+  .sidebar-credit a:hover { color: #fff; }
+  .sidebar-icon-row { display: flex; justify-content: center; gap: 8px; margin-bottom: 12px; }
 
   /* ── Stats bar ───────────────────────────────────── */
   .stats {
@@ -310,6 +319,37 @@
   .confirm-box .confirm-actions { display: flex; gap: 10px; justify-content: center; }
 
   /* ── Settings modal ─────────────────────────────── */
+  /* ── Help overlay ────────────────────────────────── */
+  .help-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(35,45,76,0.5);
+    z-index: 250; justify-content: center; align-items: center;
+  }
+  .help-overlay.open { display: flex; }
+  .help-box {
+    position: relative; background: var(--card); border-radius: 12px; padding: 28px 32px;
+    max-width: 560px; width: 92%; max-height: 85vh; overflow-y: auto;
+    box-shadow: 0 8px 40px rgba(35,45,76,0.25);
+  }
+  .help-box h3 { font-size: 18px; margin-bottom: 4px; color: var(--dark); }
+  .help-box .help-subtitle { font-size: 13px; color: var(--grey); margin-bottom: 20px; }
+  .help-section { margin-bottom: 20px; }
+  .help-section h4 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; color: var(--pink-strong); margin-bottom: 6px; }
+  .help-section p { font-size: 13px; line-height: 1.6; color: var(--text); margin-bottom: 6px; }
+  .help-section ul { padding-left: 18px; margin: 4px 0; }
+  .help-section li { font-size: 13px; line-height: 1.6; color: var(--text); margin-bottom: 3px; }
+  .help-section a { color: var(--pink-strong); }
+  .help-divider { border: none; border-top: 1px solid var(--border); margin: 4px 0 20px; }
+  .star-method { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+  .star-card { background: var(--bg); border-radius: 8px; padding: 10px 12px; }
+  .star-card strong { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 0.4px; color: var(--pink-strong); margin-bottom: 3px; }
+  .star-card span { font-size: 12px; color: var(--grey); line-height: 1.5; }
+  .btn-help {
+    background: none; border: none; color: var(--grey); font-size: 16px; font-weight: 700;
+    cursor: pointer; padding: 4px 6px; line-height: 1; border-radius: 50%;
+    width: 26px; height: 26px; display: flex; align-items: center; justify-content: center;
+  }
+  .btn-help:hover { color: #fff; background: rgba(255,255,255,0.1); }
+
   .settings-overlay {
     display: none; position: fixed; inset: 0; background: rgba(35,45,76,0.5);
     z-index: 250; justify-content: center; align-items: center;
@@ -365,10 +405,9 @@
 <!-- ── Sidebar ─────────────────────────────────────── -->
 <aside class="sidebar">
   <div class="sidebar-header">
-    <h1>STAR Interview Prep</h1>
-    <button class="btn-gear" onclick="openSettings()" title="AI Settings">&#9881;</button>
+    <h1>STAR Lab</h1>
   </div>
-  <div class="subtitle">Create and edit your examples</div>
+  <div class="subtitle">Build and refine your interview examples</div>
 
   <div class="filter-group">
     <label>Search</label>
@@ -421,6 +460,16 @@
   <button class="btn-add" onclick="openNew()">+ Add New STAR</button>
   <button class="btn btn-secondary" style="width:100%;margin-top:8px;font-size:12px;padding:8px" onclick="openDataManager()">Export / Import</button>
   <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="handleImportFile(event)">
+
+  <div class="sidebar-footer">
+    <div class="sidebar-icon-row">
+      <button class="btn-help" onclick="openHelp()" title="Help & Instructions">?</button>
+      <button class="btn-gear" onclick="openSettings()" title="AI Settings">&#9881;</button>
+    </div>
+    <hr style="border:none; border-top:1px solid rgba(255,255,255,0.1); margin: 12px 0;">
+    <img src="/icons/DirectingStrategy-logo-colour.png" alt="Directing Strategy" style="width:48px; height:48px; object-fit:cover; background:#fff; border-radius:50%; margin-bottom:5px;">
+    <div class="sidebar-credit">Created by<br><a href="https://directingstrategy.com" target="_blank" rel="noopener">directingstrategy.com</a></div>
+  </div>
 </aside>
 
 <!-- ── Main content ────────────────────────────────── -->
@@ -472,6 +521,83 @@
     <div class="settings-actions">
       <button class="btn btn-save" onclick="saveSettings()">Save</button>
       <button class="btn btn-secondary" onclick="closeSettings()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Help overlay ─────────────────────────────── -->
+<div class="help-overlay" id="helpOverlay">
+  <div class="help-box">
+    <button class="modal-close" onclick="closeHelp()" style="position:absolute;top:12px;right:16px">&times;</button>
+    <h3>How to use STAR Lab</h3>
+    <p class="help-subtitle">A free tool to build, manage, and refine your behavioural interview examples.</p>
+
+    <div class="help-section">
+      <h4>What is the STAR Method?</h4>
+      <div class="star-method">
+        <div class="star-card"><strong>Situation</strong><span>Set the scene. What was the context and what was at stake?</span></div>
+        <div class="star-card"><strong>Task</strong><span>What was your specific responsibility — distinct from your team's?</span></div>
+        <div class="star-card"><strong>Action</strong><span>What did <em>you</em> personally do? Be concrete and first-person.</span></div>
+        <div class="star-card"><strong>Result</strong><span>What was the outcome? Quantify where possible.</span></div>
+      </div>
+    </div>
+
+    <hr class="help-divider">
+
+    <div class="help-section">
+      <h4>Getting Started</h4>
+      <ul>
+        <li>Click <strong>+ Add New STAR</strong> in the sidebar to create your first example.</li>
+        <li>Fill in all four sections. Save as <em>In Progress</em> until it's polished.</li>
+        <li>Use the filters to find the right example fast during interview prep.</li>
+      </ul>
+    </div>
+
+    <div class="help-section">
+      <h4>Competencies</h4>
+      <p>The app ships with 12 default competencies tailored to <strong>strategy and consulting roles</strong>. Click <strong>Manage</strong> next to the Competency filter to edit, add, or remove competencies to match any role you're targeting.</p>
+    </div>
+
+    <div class="help-section">
+      <h4>AI Review</h4>
+      <ul>
+        <li>Open a STAR and click <strong>Get AI Feedback</strong> to get a coached review.</li>
+        <li>Requires your own <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">OpenAI API key</a>. Enter it via the ⚙ Settings icon.</li>
+        <li>Your key is stored only in your browser and sent directly to OpenAI — never to any server.</li>
+      </ul>
+    </div>
+
+    <div class="help-section">
+      <h4>Your Data is Private</h4>
+      <p>All your STAR examples are stored locally in your browser using localStorage. Nothing is sent to any server. Use <strong>Export / Import</strong> to back up your data or move it to another device.</p>
+    </div>
+
+    <div class="help-section">
+      <h4>Export &amp; Import</h4>
+      <ul>
+        <li><strong>Export JSON</strong> — full backup, re-importable on any device.</li>
+        <li><strong>Export CSV</strong> — for viewing in a spreadsheet.</li>
+        <li><strong>Import JSON</strong> — replaces all data. Export first as a backup.</li>
+      </ul>
+    </div>
+
+    <div class="help-section">
+      <h4>Install as an App</h4>
+      <ul>
+        <li><strong>Chrome:</strong> click the install icon (⊕) in the address bar → Install.</li>
+        <li><strong>Safari on Mac:</strong> Share → Add to Dock.</li>
+        <li>Once installed, the app opens in its own window and works offline.</li>
+      </ul>
+    </div>
+
+    <div class="help-section">
+      <h4>Get Help</h4>
+      <p>Have a question or found a bug? Raise an issue on <a href="https://github.com/DirectingStrategy/career-stars/issues" target="_blank" rel="noopener">GitHub Issues</a> or leave a comment on the blog post where you found this tool.</p>
+      <p>The full source code is publicly available at <a href="https://github.com/DirectingStrategy/career-stars" target="_blank" rel="noopener">github.com/DirectingStrategy/career-stars</a>.</p>
+    </div>
+
+    <div class="settings-actions">
+      <button class="btn btn-secondary" onclick="closeHelp()">Close</button>
     </div>
   </div>
 </div>
@@ -618,6 +744,7 @@ async function init() {
   populateDropdowns();
   loadStars();
   setupListeners();
+  if (!localStorage.getItem("starApp_helpSeen")) openHelp();
 }
 
 function populateDropdowns() {
@@ -667,9 +794,12 @@ function setupListeners() {
   document.getElementById("modalOverlay").addEventListener("click", e => {
     if (e.target === document.getElementById("modalOverlay")) closeModal();
   });
-  document.addEventListener("keydown", e => { if (e.key === "Escape") { closeSettings(); closeModal(); closeConfirm(); } });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") { closeSettings(); closeModal(); closeConfirm(); closeHelp(); } });
   document.getElementById("settingsOverlay").addEventListener("click", e => {
     if (e.target === document.getElementById("settingsOverlay")) closeSettings();
+  });
+  document.getElementById("helpOverlay").addEventListener("click", e => {
+    if (e.target === document.getElementById("helpOverlay")) closeHelp();
   });
 }
 
@@ -1482,6 +1612,15 @@ function loadSettings() {
 function populateModelSelect() {
   const modelSelect = document.getElementById("settingsModel");
   modelSelect.innerHTML = AI_MODELS.map(m => `<option value="${m.value}">${m.label}</option>`).join("");
+}
+
+function openHelp() {
+  document.getElementById("helpOverlay").classList.add("open");
+}
+
+function closeHelp() {
+  document.getElementById("helpOverlay").classList.remove("open");
+  localStorage.setItem("starApp_helpSeen", "1");
 }
 
 function openSettings() {

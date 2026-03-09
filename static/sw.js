@@ -1,4 +1,4 @@
-const CACHE_NAME = "star-prep-v1";
+const CACHE_NAME = "star-prep-v2";
 const SHELL = [
   "/",
   "/index.html",
