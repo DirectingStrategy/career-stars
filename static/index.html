@@ -772,8 +772,11 @@ async function init() {
   populateDropdowns();
   loadStars();
   setupListeners();
-  if (!localStorage.getItem("starApp_helpSeen")) openHelp();
-  checkBackupReminder();
+  if (!localStorage.getItem("starApp_helpSeen")) {
+    openHelp();
+  } else {
+    checkBackupReminder();
+  }
 }
 
 function populateDropdowns() {
