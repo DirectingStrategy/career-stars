@@ -392,7 +392,7 @@
 
   /* ── Print ───────────────────────────────────────── */
   @media print {
-    .sidebar, .main, .confirm-overlay, .settings-overlay, .toast,
+    .sidebar, .main, .confirm-overlay, .settings-overlay, .help-overlay, .toast,
     .modal-actions, .modal-close { display: none !important; }
     body { display: block; background: white; color: black; }
     .modal-overlay.open { display: block !important; position: static; padding: 0; background: none; }
@@ -927,6 +927,7 @@ function renderModal() {
           <div class="modal-header-meta">
             ${esc(e.company)} &middot; ${esc(e.role || "")} &middot; ${esc(e.period || "")}
             &nbsp; <span class="badge badge-${e.completeness}">${completenessLabel(e.completeness)}</span>
+            <span class="badge badge-${e.recency || 'old'}">${recencyLabel(e.recency || 'old')}</span>
           </div>
           <div style="margin-top:6px">
             <span class="badge badge-competency">${esc(e.primary_competency)}</span>
@@ -1676,7 +1677,7 @@ async function getAIFeedback(starId) {
     ].join("\n");
 
     const systemPrompt = AI_REVIEW_PROMPT.replace(/{primary_competency}/g, target.primary_competency || "Unknown");
-    const model = s.model || "gpt-4o-mini";
+    const model = s.model || "gpt-4.1";
 
     const res = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
@@ -1801,7 +1802,7 @@ function handleImportFile(event) {
 
 function exportCSV() {
   const data = loadData();
-  const cols = ["id","title","primary_competency","secondary_competencies","company","role","period","completeness","recency","tags","situation","task","action","result","key_metrics"];
+  const cols = ["id","title","primary_competency","secondary_competencies","company","role","period","completeness","recency","tags","situation","task","action","result","key_metrics","review_notes"];
   const escape = v => {
     const s = Array.isArray(v) ? v.join("; ") : String(v ?? "");
     return (s.includes(",") || s.includes("\n") || s.includes('"')) ? `"${s.replace(/"/g, '""')}"` : s;
