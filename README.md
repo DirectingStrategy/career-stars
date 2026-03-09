@@ -35,6 +35,17 @@ The app ships with 12 default competencies tailored to **strategy and consulting
 - Requires your own [OpenAI API key](https://platform.openai.com/api-keys). Enter it via the ⚙ Settings icon.
 - Your key is stored only in your browser and sent directly to OpenAI — never to any server.
 
+### Keeping your API key safe
+
+Your key is stored in your browser's localStorage. This is convenient but not as secure as a system keychain. To limit your risk:
+
+- **Create a separate key** — generate a dedicated API key just for STAR Lab at [platform.openai.com/api-keys](https://platform.openai.com/api-keys). If it's ever compromised, revoke it without affecting your other projects.
+- **Set a spending limit** — in your OpenAI account under Billing → Limits, set a low monthly budget (e.g. $5). This caps the damage if the key leaks.
+- **Restrict permissions** — when creating the key, limit it to only the Chat Completions endpoint and the models you use.
+- **Revoke when not needed** — if you're done with AI reviews, delete the key from STAR Lab's Settings and revoke it in your OpenAI dashboard.
+- **Avoid shared or public devices** — anyone with access to your browser profile or dev tools can read localStorage.
+- **Watch your browser extensions** — extensions can read page data including localStorage. Consider using a minimal-extension profile.
+
 ## Export & Import
 
 - **Export JSON** — full backup, re-importable on any device.
