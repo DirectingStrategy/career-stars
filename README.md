@@ -9,8 +9,46 @@ A progressive web app for creating, reviewing, and managing your STAR (Situation
 - **Filter and search** — by competency, company, completeness, recency, tags, and full-text search
 - **Manage competencies** — add, rename, or remove competencies from the sidebar
 - **PWA support** — install as a desktop or tablet app, works offline
-- **Data export** — download your data as JSON for backup or transfer
+- **Data export/import** — download your data as JSON or CSV for backup or transfer
 - **No backend** — runs entirely in your browser using localStorage
+
+## What is the STAR Method?
+
+- **Situation** — Set the scene. What was the context and what was at stake?
+- **Task** — What was your specific responsibility — distinct from your team's?
+- **Action** — What did *you* personally do? Be concrete and first-person.
+- **Result** — What was the outcome? Quantify where possible.
+
+## Getting Started
+
+1. Click **+ Add New STAR** in the sidebar to create your first example.
+2. Fill in all four sections. Save as *In Progress* until it's polished.
+3. Use the filters to find the right example fast during interview prep.
+
+## Competencies
+
+The app ships with 12 default competencies tailored to **strategy and consulting roles**. Click **Manage** next to the Competency filter to edit, add, or remove competencies to match any role you're targeting.
+
+## AI Review
+
+- Open a STAR and click **Get AI Feedback** to get a coached review.
+- Requires your own [OpenAI API key](https://platform.openai.com/api-keys). Enter it via the ⚙ Settings icon.
+- Your key is stored only in your browser and sent directly to OpenAI — never to any server.
+
+## Export & Import
+
+- **Export JSON** — full backup, re-importable on any device.
+- **Export CSV** — for viewing in a spreadsheet.
+- **Import JSON** — replaces all data. Export first as a backup.
+
+## Install as an App
+
+Installing STAR Lab gives your data the best chance of surviving browser updates and storage cleanup.
+
+- **Chrome:** click the install icon in the address bar → Install.
+- **Safari on Mac:** Share → Add to Dock.
+- Once installed, the app opens in its own window and works offline.
+- Even after installing, always keep a recent backup — clearing app/browser data will still erase your STARs.
 
 ## Live App
 
@@ -36,6 +74,10 @@ There is no cloud sync or server-side storage — this is by design to keep your
 The app deploys as a static site on Vercel. Configuration is in `vercel.json` — it serves the `static/` directory and rewrites all routes to `index.html` for SPA navigation.
 
 To deploy your own instance, connect this repo to Vercel and it will auto-deploy on every push.
+
+## Get Help
+
+Have a question or found a bug? Raise an issue on [GitHub](https://github.com/DirectingStrategy/career-stars/issues) or leave a comment on the blog post where you found this tool. The full source code is publicly available at [github.com/DirectingStrategy/career-stars](https://github.com/DirectingStrategy/career-stars).
 
 ## License
 
