@@ -20,6 +20,17 @@ Hosted on Vercel — see the repo's About section for the link.
 
 All data lives in your browser's localStorage under the key `starApp`. The app ships with 12 default competencies and 2 sample STAR examples to get you started.
 
+## Data Persistence & Backup
+
+Your data lives only in your browser. It will persist between sessions, but can be lost if you clear browser data — even if the app is installed as a PWA.
+
+**To protect your data:**
+- Export your STARs regularly using the Export JSON feature
+- Install the app for improved storage durability
+- The app reminds you to back up every 2 days
+
+There is no cloud sync or server-side storage — this is by design to keep your data private.
+
 ## Deployment
 
 The app deploys as a static site on Vercel. Configuration is in `vercel.json` — it serves the `static/` directory and rewrites all routes to `index.html` for SPA navigation.
