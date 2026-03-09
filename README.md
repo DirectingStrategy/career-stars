@@ -5,32 +5,16 @@ A progressive web app for creating, reviewing, and managing your STAR (Situation
 ## Features
 
 - **Create, edit, and delete** STAR examples with a clean card-based UI
-- **AI-powered review** — get feedback on your STARs using OpenAI or Anthropic (bring your own API key)
+- **AI-powered review** — get feedback on your STARs using OpenAI (bring your own API key)
 - **Filter and search** — by competency, company, completeness, recency, tags, and full-text search
 - **Manage competencies** — add, rename, or remove competencies from the sidebar
-- **PWA support** — install on your phone or desktop, works offline
+- **PWA support** — install as a desktop or tablet app, works offline
 - **Data export** — download your data as JSON for backup or transfer
 - **No backend** — runs entirely in your browser using localStorage
 
 ## Live App
 
 Hosted on Vercel — see the repo's About section for the link.
-
-## Local Development
-
-Serve the `static/` directory with any static file server:
-
-```bash
-# Python
-python3 -m http.server 8000 -d static
-
-# Node
-npx serve static
-```
-
-Then open [http://localhost:8000](http://localhost:8000).
-
-> Note: Service worker and PWA install require HTTPS, so these features only work on the deployed version or via `localhost`.
 
 ## Data Storage
 
